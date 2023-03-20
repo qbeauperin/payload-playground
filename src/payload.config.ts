@@ -2,6 +2,7 @@ import { buildConfig } from 'payload/config';
 import path from 'path';
 import Posts from './collections/Posts';
 import Tags from './collections/Tags';
+import Pages from './collections/Pages';
 import Users from './collections/Users';
 import Media from './collections/Media';
 
@@ -13,6 +14,7 @@ export default buildConfig({
   collections: [
     Posts,
     Tags,
+    Pages,
     Users,
     Media,
   ],
