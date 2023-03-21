@@ -12,6 +12,9 @@ import HeroBlock from '../blocks/Hero';
 import FeatureBlock from '../blocks/Feature';
 import GalleryBlock from '../blocks/Gallery';
 
+// Access
+import { publishedOrLoggedIn } from '../access/loggedInOrPublished';
+
 const seoConfig = {
   uploadsCollection: 'media',
   generateTitle: ({ doc }) => `${doc?.title?.value} — Fae Farm`,
@@ -25,9 +28,16 @@ const Pages: CollectionConfig = {
   admin: {
     defaultColumns: ['title', 'author', 'category', 'tags', 'status'],
     useAsTitle: 'title',
+    preview: (doc, { locale, token }) => {
+      if (doc?.slug) {
+        console.log(`User token for preview: ${token}`)
+        return `https://localhost:3000/preview/pages/${doc.slug}?locale=${locale}`;
+      }
+      return null;
+    },
   },
   access: {
-    read: () => true,
+    read: publishedOrLoggedIn
   },
   versions: {
     drafts: true,
