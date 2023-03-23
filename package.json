@@ -15,6 +15,7 @@
     "generate:graphQLSchema": "cross-env PAYLOAD_CONFIG_PATH=src/payload.config.ts payload generate:graphQLSchema"
   },
   "dependencies": {
+    "@google-cloud/storage": "^6.9.4",
     "@payloadcms/plugin-cloud-storage": "^1.0.14",
     "@payloadcms/plugin-seo": "^1.0.10",
     "dotenv": "^8.2.0",

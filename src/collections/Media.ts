@@ -5,24 +5,49 @@ const Media: CollectionConfig = {
   slug: 'media',
   upload: {
     staticDir: path.resolve(__dirname, '../../media'),
-    // Specify the size name that you'd like to use as admin thumbnail
-    adminThumbnail: 'thumbnail',
+    adminThumbnail: 'squareThumbnail',
     imageSizes: [
       {
-        height: 400,
         width: 400,
-        crop: 'center',
-        name: 'thumbnail',
+        height: 400,
+        name: 'squareThumbnail',
+        formatOptions: {
+          format: "webp",
+        },
       },
       {
-        width: 900,
-        height: 450,
-        crop: 'center',
-        name: 'sixteenByNineMedium',
+        width: 720,
+        name: 'thumbnail',
+        formatOptions: {
+          format: "webp",
+        },
+      },
+      {
+        width: 1920,
+        height: 750,
+        name: 'heroBanner',
+        formatOptions: {
+          format: "webp",
+        },
+      },
+      {
+        width: 1920,
+        height: 750,
+        name: 'heroBanner',
+        formatOptions: {
+          format: "webp",
+        },
       },
     ],
   },
-  fields: [],
+  fields: [
+    {
+      name: 'alt',
+      type: 'text',
+      required: true,
+      localized: true,
+    },
+  ],
 };
 
 export default Media;

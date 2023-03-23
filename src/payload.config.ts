@@ -1,4 +1,6 @@
 import { buildConfig } from 'payload/config';
+import { gcsAdapter } from '@payloadcms/plugin-cloud-storage/gcs';
+import { cloudStorage } from '@payloadcms/plugin-cloud-storage';
 import path from 'path';
 import Posts from './collections/Posts';
 import Tags from './collections/Tags';
@@ -6,8 +8,15 @@ import Pages from './collections/Pages';
 import Users from './collections/Users';
 import Media from './collections/Media';
 
+const adapter = gcsAdapter({
+  options: {
+    keyFilename: './gcs-credentials.json',
+  },
+  bucket: process.env.GCS_BUCKET,
+})
+
 export default buildConfig({
-  serverURL: 'http://localhost:3000',
+  serverURL: process.env.SERVER_URL,
   admin: {
     user: Users.slug,
   },
@@ -34,4 +43,15 @@ export default buildConfig({
     defaultLocale: 'en',
     fallback: true,
   },
+  plugins: [
+    cloudStorage({
+      collections: {
+        'media': {
+          adapter: adapter,
+          disablePayloadAccessControl: true,
+          prefix: 'media',
+        },
+      },
+    }),
+  ]
 });
