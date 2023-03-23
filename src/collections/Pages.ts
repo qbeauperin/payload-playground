@@ -14,6 +14,7 @@ import GalleryBlock from '../blocks/Gallery';
 
 // Access
 import { publishedOrLoggedIn } from '../access/loggedInOrPublished';
+import publishedDateField from '../fields/publishedDate';
 
 const seoConfig = {
   uploadsCollection: 'media',
@@ -153,13 +154,7 @@ const Pages: CollectionConfig = {
         }
       ]
     },
-    {
-      name: 'publishedDate',
-      type: 'date',
-      admin: {
-        position: 'sidebar',
-      },
-    },
+    publishedDateField,
   ]
 }
 

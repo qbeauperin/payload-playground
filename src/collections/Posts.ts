@@ -9,6 +9,7 @@ import { getMetaImageField } from '@payloadcms/plugin-seo/dist/fields/MetaImage'
 
 // Access
 import { publishedOrLoggedIn } from '../access/loggedInOrPublished';
+import publishedDateField from '../fields/publishedDate';
 
 const seoConfig = {
   uploadsCollection: 'media',
@@ -153,13 +154,7 @@ const Posts: CollectionConfig = {
         }
       ]
     },
-    {
-      name: 'publishedDate',
-      type: 'date',
-      admin: {
-        position: 'sidebar',
-      },
-    },
+    publishedDateField,
     {
       name: 'related',
       type: 'relationship',
