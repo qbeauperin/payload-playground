@@ -19,7 +19,7 @@
     "@payloadcms/plugin-seo": "^1.0.10",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "payload": "^1.6.19",
+    "payload": "^1.6.24",
     "slugify": "^1.6.5"
   },
   "devDependencies": {
