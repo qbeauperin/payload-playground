@@ -7,6 +7,7 @@ import Tags from './collections/Tags';
 import Pages from './collections/Pages';
 import Users from './collections/Users';
 import Media from './collections/Media';
+import MainMenu from './globals/MainMenu';
 
 const adapter = gcsAdapter({
   options: {
@@ -26,6 +27,9 @@ export default buildConfig({
     Pages,
     Users,
     Media,
+  ],
+  globals: [
+    MainMenu,
   ],
   typescript: {
     outputFile: path.resolve(__dirname, 'payload-types.ts')
