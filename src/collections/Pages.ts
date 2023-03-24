@@ -27,6 +27,7 @@ const seoConfig = {
 const Pages: CollectionConfig = {
   slug: 'pages',
   admin: {
+    group: 'Site',
     defaultColumns: ['title', 'author', 'category', 'tags', 'status'],
     useAsTitle: 'title',
     preview: (doc, { locale, token }) => {

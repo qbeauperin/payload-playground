@@ -22,7 +22,8 @@ const seoConfig = {
 const Posts: CollectionConfig = {
   slug: 'posts',
   admin: {
-    defaultColumns: ['title', 'author', 'category', 'tags', 'status'],
+    group: 'News',
+    defaultColumns: ['featuredImage', 'title', 'tags', 'publishedDate', 'status'],
     useAsTitle: 'title',
     preview: (doc, { locale, token }) => {
       if (doc?.slug) {

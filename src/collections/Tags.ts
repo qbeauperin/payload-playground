@@ -3,6 +3,7 @@ import { CollectionConfig } from 'payload/types';
 const Tags: CollectionConfig = {
   slug: 'tags',
   admin: {
+    group: 'News',
     useAsTitle: 'name',
   },
   access: {

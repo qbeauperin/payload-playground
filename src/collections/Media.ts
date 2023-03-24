@@ -3,6 +3,9 @@ import type { CollectionConfig } from 'payload/types';
 
 const Media: CollectionConfig = {
   slug: 'media',
+  admin: {
+    group: 'News',
+  },
   upload: {
     staticDir: path.resolve(__dirname, '../../media'),
     adminThumbnail: 'squareThumbnail',

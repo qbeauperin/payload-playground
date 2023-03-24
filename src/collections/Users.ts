@@ -4,6 +4,7 @@ const Users: CollectionConfig = {
   slug: 'users',
   auth: true,
   admin: {
+    group: 'Admin',
     useAsTitle: 'email',
   },
   access: {
