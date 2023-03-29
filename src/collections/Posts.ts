@@ -1,4 +1,5 @@
 import { CollectionConfig } from 'payload/types';
+import { CollectionBeforeChangeHook } from 'payload/types';
 
 // SEO fields
 import { Overview } from '@payloadcms/plugin-seo/dist/ui/Overview';
@@ -9,6 +10,7 @@ import { getMetaImageField } from '@payloadcms/plugin-seo/dist/fields/MetaImage'
 
 // Access
 import { publishedOrLoggedIn } from '../access/loggedInOrPublished';
+import { beforeChangeHook } from './hooks/debug';
 import publishedDateField from '../fields/publishedDate';
 
 const seoConfig = {
@@ -130,7 +132,6 @@ const Posts: CollectionConfig = {
                   name: 'image',
                   label: 'Meta Image',
                   type: 'upload',
-                  localized: true,
                   relationTo: seoConfig?.uploadsCollection,
                   admin: {
                     description: 'Maximum upload file size: 12MB. Recommended file size for images is <500KB.',
@@ -169,7 +170,10 @@ const Posts: CollectionConfig = {
         position: 'sidebar',
       },
     },
-  ]
+  ],
+  hooks: {
+    beforeChange: [beforeChangeHook]
+  },
 }
 
 export default Posts;
