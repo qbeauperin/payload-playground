@@ -8,6 +8,7 @@ import Pages from './collections/Pages';
 import Users from './collections/Users';
 import Media from './collections/Media';
 import MainMenu from './globals/MainMenu';
+import { translator } from './plugins/translator';
 
 const adapter = gcsAdapter({
   options: {
@@ -56,6 +57,11 @@ export default buildConfig({
           prefix: 'media',
         },
       },
+    }),
+    translator({
+      collections: [
+        'posts', 'pages',
+      ]
     }),
   ]
 });
