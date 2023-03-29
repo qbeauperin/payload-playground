@@ -16,11 +16,12 @@ const TranslatorUI: React.FC<Props> = (props) => {
     const [ allLanguagesData, setAllLanguagesData ] = useState(null);
     const locale = useLocale();
     const { localization } = useConfig();
-    const { locales } = localization;
+    const { locales, defaultLocale } = localization;
     const { validateForm } = useForm();
     const { toggleModal } = useModal();
     const { id, collection, global, type } = useDocumentInfo();
     const modalSlug = `${baseClass}-confirmation-${id}`;
+    const localesWithoutDefault = locales.filter((locale) => locale != defaultLocale ? locale : false);
 
     async function getFullDocData(){
         try {
@@ -96,7 +97,7 @@ const TranslatorUI: React.FC<Props> = (props) => {
                         </li>
                         <li>
                             <span className="label">Languages</span>
-                            <div>en, fr, zh_hans, zh_hant</div>
+                            <div>{localesWithoutDefault.map((locale) => <pre key={locale}>{locale}</pre> )}</div>
                         </li>
                         <li>
                             <span className="label">Deadline</span>
