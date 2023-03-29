@@ -162,6 +162,9 @@ const Posts: CollectionConfig = {
       relationTo: 'posts',
       hasMany: true,
       max: 3,
+      filterOptions: {
+        _status: { equals: 'published'}
+      },
       admin: {
         position: 'sidebar',
       },
