@@ -1,0 +1,16 @@
+@import '~payload/scss';
+
+.slug-field {
+    &__wrap {
+        display: flex;
+
+        .text {
+            flex: 1;
+        }
+
+        .btn {
+            margin-top: 0;
+            margin-left: base(.75);
+        }
+    }
+}
