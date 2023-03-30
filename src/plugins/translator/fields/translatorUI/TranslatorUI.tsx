@@ -4,9 +4,10 @@ import { useConfig, useLocale, useDocumentInfo } from "payload/components/utilit
 import { Modal, useModal } from '@faceless-ui/modal';
 import { MinimalTemplate } from "payload/components/templates";
 import { Button } from "payload/components/elements";
-import { useForm } from 'payload/components/forms';
+import { Label, useForm } from 'payload/components/forms';
 import { Props } from 'payload/components/fields/Text';
 import './styles.scss';
+import LocalesProgress from "./components/LocalesProgress";
 
 const baseClass = 'translator';
 
@@ -17,6 +18,11 @@ const TranslatorUI: React.FC<Props> = (props) => {
     const locale = useLocale();
     const { localization } = useConfig();
     const { locales, defaultLocale } = localization;
+    const defaultProgress = locales.reduce((acc, locale) => {
+        acc[locale] = 0;
+        return acc;
+    }, {});
+    const [ progress, setProgress ] = useState(defaultProgress);
     const { validateForm } = useForm();
     const { toggleModal } = useModal();
     const { id, collection, global, type } = useDocumentInfo();
@@ -26,7 +32,7 @@ const TranslatorUI: React.FC<Props> = (props) => {
     async function getFullDocData(){
         try {
             setIsLoading(true);
-            await fetch(`http://localhost:3000/api/posts/${id}?locale=*&depth=0`)
+            await fetch(`http://localhost:3000/api/posts/${id}?locale=*&depth=0&draft=true`)
                 .then((response) => response.json())
                 .then((doc) => {
                     setAllLanguagesData(doc);
@@ -39,8 +45,23 @@ const TranslatorUI: React.FC<Props> = (props) => {
     }
 
     function calculateProgress(data){
-        // console.log(locales);
-        console.log(data);
+        if (!data || typeof data !== 'object') return false;
+
+        const progress = Object.assign({}, defaultProgress);
+
+        if (data[defaultLocale]){
+            for (const key in data) {
+                if(data[key] && data[key] !== '') progress[key]++;
+            }
+        }else{
+            for (const key in data) {
+                const childProgress = calculateProgress(data[key]);
+                for(const childKey in childProgress){
+                    progress[childKey] += childProgress[childKey];
+                }
+            }
+        }
+        return progress;
     }
 
     function handleGenerate(){
@@ -71,12 +92,18 @@ const TranslatorUI: React.FC<Props> = (props) => {
     }
 
     useEffect(() => {
-        calculateProgress(allLanguagesData);
-    }, [allLanguagesData]);
+        getFullDocData();
+    }, [])
 
-    return (
+    useEffect(() => {
+        if (locales && allLanguagesData){
+            setProgress(calculateProgress(allLanguagesData));
+        }
+    }, [locales, allLanguagesData]);
+
+    return locale === defaultLocale ? (
         <div className={baseClass + (isLoading ? ' isLoading' : '')}>
-            {/* <Label label={label} /> */}
+            <Label label={label} />
             <Button
                 size="small"
                 buttonStyle="secondary"
@@ -84,6 +111,7 @@ const TranslatorUI: React.FC<Props> = (props) => {
             >
                 Request translation
             </Button>
+            <LocalesProgress {...{progress, defaultLocale}} />
             <Modal
                 slug={modalSlug}
                 className={`${baseClass}__modal`}
@@ -122,7 +150,7 @@ const TranslatorUI: React.FC<Props> = (props) => {
                 </MinimalTemplate>
             </Modal>
         </div>
-    )
+    ) : false;
 };
 
 export default TranslatorUI;

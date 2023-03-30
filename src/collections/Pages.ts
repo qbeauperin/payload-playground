@@ -130,7 +130,6 @@ const Pages: CollectionConfig = {
                   name: 'image',
                   label: 'Meta Image',
                   type: 'upload',
-                  localized: true,
                   relationTo: seoConfig?.uploadsCollection,
                   admin: {
                     description: 'Maximum upload file size: 12MB. Recommended file size for images is <500KB.',

@@ -23,7 +23,7 @@ export const translationStatus: Field = {
             label: 'Partially translated',
         },
     ],
-    // hidden: true,
+    hidden: true,
     admin: {
         position: 'sidebar',
         readOnly: true,

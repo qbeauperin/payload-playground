@@ -42,6 +42,9 @@ export default buildConfig({
     locales: [
       'en',
       'fr',
+      'de',
+      'jp',
+      'pt_BR',
       'zh_hans',
       'zh_hant',
     ],
