@@ -25,13 +25,6 @@ const Posts: CollectionConfig = {
     group: 'News',
     defaultColumns: ['featuredImage', 'title', 'tags', 'publishedDate', 'status'],
     useAsTitle: 'title',
-    preview: (doc, { locale, token }) => {
-      if (doc?.slug) {
-        console.log(`User token for preview: ${token}`)
-        return `https://localhost:3000/preview/posts/${doc.slug}?locale=${locale}`;
-      }
-      return null;
-    },
   },
   access: {
     read: publishedOrLoggedIn
