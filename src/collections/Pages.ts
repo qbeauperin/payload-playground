@@ -30,13 +30,6 @@ const Pages: CollectionConfig = {
     group: 'Site',
     defaultColumns: ['title', 'author', 'category', 'tags', 'status'],
     useAsTitle: 'title',
-    preview: (doc, { locale, token }) => {
-      if (doc?.slug) {
-        console.log(`User token for preview: ${token}`)
-        return `https://localhost:3000/preview/pages/${doc.slug}?locale=${locale}`;
-      }
-      return null;
-    },
   },
   access: {
     read: publishedOrLoggedIn
@@ -49,7 +42,7 @@ const Pages: CollectionConfig = {
       type: 'tabs',
       tabs: [
         {
-          label: 'Settings',
+          label: 'Metadata',
           fields: [
             {
               name: 'title',
@@ -70,6 +63,7 @@ const Pages: CollectionConfig = {
               localized: true,
               required: true,
             },
+            publishedDateField,
           ]
         },
         {
@@ -154,7 +148,6 @@ const Pages: CollectionConfig = {
         }
       ]
     },
-    publishedDateField,
   ]
 }
 

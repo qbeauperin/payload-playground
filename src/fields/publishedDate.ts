@@ -4,7 +4,7 @@ const publishedDateField: Field = {
     name: 'publishedDate',
     type: 'date',
     admin: {
-        position: 'sidebar',
+        // position: 'sidebar',
         date: {
             pickerAppearance: 'dayAndTime',
             timeIntervals: 15,
