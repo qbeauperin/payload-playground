@@ -18,10 +18,6 @@ export const translationStatus: Field = {
             value: 'translated',
             label: 'Translated',
         },
-        {
-            value: 'partiallyTranslated',
-            label: 'Partially translated',
-        },
     ],
     hidden: true,
     admin: {
