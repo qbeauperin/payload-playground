@@ -42,7 +42,7 @@ const Pages: CollectionConfig = {
       type: 'tabs',
       tabs: [
         {
-          label: 'Settings',
+          label: 'Metadata',
           fields: [
             {
               name: 'title',
@@ -63,6 +63,7 @@ const Pages: CollectionConfig = {
               localized: true,
               required: true,
             },
+            publishedDateField,
           ]
         },
         {
@@ -148,7 +149,6 @@ const Pages: CollectionConfig = {
         }
       ]
     },
-    publishedDateField,
   ]
 }
 

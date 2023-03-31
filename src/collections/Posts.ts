@@ -37,7 +37,7 @@ const Posts: CollectionConfig = {
       type: 'tabs',
       tabs: [
         {
-          label: 'Content',
+          label: 'Metadata',
           fields: [
             {
               name: 'title',
@@ -59,11 +59,30 @@ const Posts: CollectionConfig = {
               required: true,
             },
             {
-              name: 'tags',
-              type: 'relationship',
-              relationTo: 'tags',
-              hasMany: true,
-              min: 1,
+              type: 'row',
+              fields: [
+                {
+                  name: 'tags',
+                  type: 'relationship',
+                  relationTo: 'tags',
+                  hasMany: true,
+                  min: 1,
+                },
+                {
+                  name: 'related',
+                  label: 'Related posts',
+                  type: 'relationship',
+                  relationTo: 'posts',
+                  hasMany: true,
+                  max: 3,
+                  filterOptions: {
+                    _status: { equals: 'published' }
+                  },
+                  admin: {
+                    position: 'sidebar',
+                  },
+                },
+              ],
             },
             {
               name: 'featuredImage',
@@ -74,6 +93,13 @@ const Posts: CollectionConfig = {
                 mimeType: { contains: 'image' },
               },
             },
+            
+            publishedDateField,
+          ]
+        },
+        {
+          label: 'Content',
+          fields: [
             {
               name: 'content',
               type: 'richText',
@@ -147,20 +173,6 @@ const Posts: CollectionConfig = {
           ]
         }
       ]
-    },
-    publishedDateField,
-    {
-      name: 'related',
-      type: 'relationship',
-      relationTo: 'posts',
-      hasMany: true,
-      max: 3,
-      filterOptions: {
-        _status: { equals: 'published'}
-      },
-      admin: {
-        position: 'sidebar',
-      },
     },
   ]
 }
