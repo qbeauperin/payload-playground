@@ -60,6 +60,10 @@
 
         li {
             margin-bottom: 0.9rem;
+
+            &.warning {
+                color: var(--theme-error-500);
+            }
         }
     }
 

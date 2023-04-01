@@ -1,15 +1,18 @@
 import payload from "payload";
+import { LocalizationConfig } from 'payload/dist/config/types';
 import React, { useState, useEffect } from 'react';
 import { useConfig, useLocale, useDocumentInfo } from "payload/components/utilities";
 import { Modal, useModal } from '@faceless-ui/modal';
 import { MinimalTemplate } from "payload/components/templates";
 import { Button } from "payload/components/elements";
-import { Label, useForm } from 'payload/components/forms';
+import { Label, useForm, useFormFields } from 'payload/components/forms';
 import { Props } from 'payload/components/fields/Text';
 import './styles.scss';
 import LocalesProgress from "./components/LocalesProgress";
+import { calculateDeadline } from "../../utilities/calculateDeadline";
 
 const baseClass = 'translator';
+const pastDeadlineMessage = "Based on the current published date, you probably won't get the translations back in time.";
 
 const TranslatorUI: React.FC<Props> = (props) => {
     const { label, path } = props;
@@ -17,17 +20,23 @@ const TranslatorUI: React.FC<Props> = (props) => {
     const [ allLanguagesData, setAllLanguagesData ] = useState(null);
     const locale = useLocale();
     const { localization } = useConfig();
-    const { locales, defaultLocale } = localization;
+    const { locales, defaultLocale } = localization as LocalizationConfig;
     const defaultProgress = locales.reduce((acc, locale) => {
         acc[locale] = 0;
         return acc;
     }, {});
     const [ progress, setProgress ] = useState(defaultProgress);
+    const [ totalStrings, setTotalStrings ] = useState(22);
+    const [ totalWords, setTotalWords ] = useState(420);
     const { validateForm } = useForm();
     const { toggleModal } = useModal();
     const { id, collection, global, type } = useDocumentInfo();
     const modalSlug = `${baseClass}-confirmation-${id}`;
     const localesWithoutDefault = locales.filter((locale) => locale != defaultLocale ? locale : false);
+    const publishedDateField = useFormFields(([fields, dispatch]) => fields.publishedDate);
+    const publishedDate = new Date(publishedDateField?.value as string);
+    const deadline = calculateDeadline(totalWords);
+    const isDeadlineTooShort = deadline.getTime() > publishedDate.getTime();
 
     async function getFullDocData(){
         try {
@@ -65,7 +74,7 @@ const TranslatorUI: React.FC<Props> = (props) => {
     }
 
     function handleGenerate(){
-        console.log('TRANSLATION REQUESTED');
+        console.log(deadline);
     }
 
     function getLocalizedFields(array){
@@ -121,15 +130,19 @@ const TranslatorUI: React.FC<Props> = (props) => {
                     <ul>
                         <li>
                             <span className="label">Quantity</span>
-                            <div>69 strings, 420 words</div>
+                            <div>{ `${totalStrings} strings, ${totalWords} words` }</div>
                         </li>
                         <li>
                             <span className="label">Languages</span>
                             <div>{localesWithoutDefault.map((locale) => <pre key={locale}>{locale}</pre> )}</div>
                         </li>
-                        <li>
+                        <li className={isDeadlineTooShort ? 'warning' : ''} title={isDeadlineTooShort ? pastDeadlineMessage : ''}>
                             <span className="label">Deadline</span>
-                            <div>April 6, 2023 (Thursday)</div>
+                            <div>{deadline.toLocaleDateString('en', {
+                                month: 'short',
+                                day: 'numeric',
+                                year: 'numeric'
+                            })}</div>
                         </li>
                     </ul>
 
