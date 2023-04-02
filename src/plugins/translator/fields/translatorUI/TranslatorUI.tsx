@@ -113,6 +113,7 @@ const TranslatorUI: React.FC<Props> = (props) => {
     return locale === defaultLocale ? (
         <div className={baseClass + (isLoading ? ' isLoading' : '')}>
             <Label label={label} />
+            <LocalesProgress {...{progress, defaultLocale}} />
             <Button
                 size="small"
                 buttonStyle="secondary"
@@ -120,7 +121,6 @@ const TranslatorUI: React.FC<Props> = (props) => {
             >
                 Request translation
             </Button>
-            <LocalesProgress {...{progress, defaultLocale}} />
             <Modal
                 slug={modalSlug}
                 className={`${baseClass}__modal`}
