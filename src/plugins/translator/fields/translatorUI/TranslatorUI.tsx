@@ -41,7 +41,7 @@ const TranslatorUI: React.FC<Props> = (props) => {
     async function getFullDocData(){
         try {
             setIsLoading(true);
-            await fetch(`http://localhost:3000/api/posts/${id}?locale=*&depth=0&draft=true`)
+            await fetch(`http://localhost:3000/api/${collection?.slug}/${id}?locale=*&depth=0&draft=true`)
                 .then((response) => response.json())
                 .then((doc) => {
                     setAllLanguagesData(doc);
