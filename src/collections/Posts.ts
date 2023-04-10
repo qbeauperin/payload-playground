@@ -173,7 +173,7 @@ const Posts: CollectionConfig = {
         }
       ]
     },
-  ]
+  ],
 }
 
 export default Posts;

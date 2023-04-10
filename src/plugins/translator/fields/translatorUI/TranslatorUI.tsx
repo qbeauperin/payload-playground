@@ -1,4 +1,3 @@
-import payload from "payload";
 import { LocalizationConfig } from 'payload/dist/config/types';
 import React, { useState, useEffect } from 'react';
 import { useConfig, useLocale, useDocumentInfo } from "payload/components/utilities";
@@ -12,10 +11,11 @@ import LocalesProgress from "./components/LocalesProgress";
 import { calculateDeadline } from "../../utilities/calculateDeadline";
 
 const baseClass = 'translator';
+const fieldsValidationMessage = "Some of your fields aren't valid. Please check and try again.";
 const pastDeadlineMessage = "Based on the current published date, you probably won't get the translations back in time.";
 
 const TranslatorUI: React.FC<Props> = (props) => {
-    const { label, path } = props;
+    const { label } = props;
     const [ isLoading, setIsLoading ] = useState(false);
     const [ allLanguagesData, setAllLanguagesData ] = useState(null);
     const locale = useLocale();
@@ -28,6 +28,7 @@ const TranslatorUI: React.FC<Props> = (props) => {
     const [ progress, setProgress ] = useState(defaultProgress);
     const [ totalStrings, setTotalStrings ] = useState(22);
     const [ totalWords, setTotalWords ] = useState(420);
+    const [ validationError, setValidationError ] = useState(false);
     const { validateForm } = useForm();
     const { toggleModal } = useModal();
     const { id, collection, global, type } = useDocumentInfo();
@@ -114,7 +115,10 @@ const TranslatorUI: React.FC<Props> = (props) => {
         <div className={baseClass + (isLoading ? ' isLoading' : '')}>
             <Label label={label} />
             <LocalesProgress {...{progress, defaultLocale}} />
-            <Button
+            { validationError && 
+                <p className="">{fieldsValidationMessage}</p>
+            }
+            {/* <Button
                 size="small"
                 buttonStyle="secondary"
                 onClick={onRequestButtonClick}
@@ -161,7 +165,7 @@ const TranslatorUI: React.FC<Props> = (props) => {
                         Request
                     </Button>
                 </MinimalTemplate>
-            </Modal>
+            </Modal> */}
         </div>
     ) : false;
 };

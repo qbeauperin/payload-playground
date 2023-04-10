@@ -1,8 +1,8 @@
 import type { Field } from 'payload/types'
 
-export const translatedVersion: Field = {
-    name: 'translationVersion',
-    type: 'text',
+export const translationProgress: Field = {
+    name: 'translationProgress',
+    type: 'json',
     hidden: true,
     admin: {
         position: 'sidebar',

@@ -1,6 +1,6 @@
 import { Field } from 'payload/types';
 import TranslatorUI from './TranslatorUI';
-import { useConfig, useLocale } from "payload/components/utilities";
+import Cell from './Cell';
 
 
 const translatorField: Field = {
@@ -10,7 +10,8 @@ const translatorField: Field = {
     admin: {
         position: 'sidebar',
         components: {
-            Field: TranslatorUI
+            Field: TranslatorUI,
+            Cell: Cell,
         },
     }
 };
