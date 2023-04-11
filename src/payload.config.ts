@@ -8,6 +8,7 @@ import Pages from './collections/Pages';
 import Users from './collections/Users';
 import Media from './collections/Media';
 import MainMenu from './globals/MainMenu';
+import { collaboration } from './plugins/collaboration';
 
 const adapter = gcsAdapter({
   options: {
@@ -56,6 +57,9 @@ export default buildConfig({
           prefix: 'media',
         },
       },
+    }),
+    collaboration({
+      collections: [ 'posts', 'pages' ]
     }),
   ]
 });
