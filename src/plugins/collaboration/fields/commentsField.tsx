@@ -1,6 +1,6 @@
-import React from 'react';
-import { Field } from 'payload/types';
+import React, { useState, ChangeEvent } from 'react';
 import { Label } from 'payload/components/forms';
+import { Field } from 'payload/types';
 import { UIField } from 'payload/dist/fields/config/types';
 import CommentList from '../components/CommentList';
 

@@ -1,0 +1,23 @@
+@import 'payload/scss/index.scss';
+
+.comment-editor {
+    .field-type.textarea {
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    &__actions {
+        display: flex;
+        margin-top: base(.5);
+        justify-content: flex-end;
+
+        .btn {
+            margin-top: 0;
+            margin-bottom: 0;
+            
+            & + .btn {
+                margin-left: base(.5);
+            }
+        }
+    }
+}

@@ -1,3 +1,5 @@
+@import 'payload/scss/index.scss';
+
 .comment-list {
     margin: 0;
     padding: 0;
@@ -6,5 +8,9 @@
     li {
         border-left: 2px solid var(--theme-elevation-800);
         padding: 5px 0 5px 10px;
+
+        &:not(:last-child){
+            margin-bottom: base(.5);
+        }
     }
 }
