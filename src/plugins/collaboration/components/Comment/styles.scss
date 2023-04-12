@@ -38,8 +38,8 @@
     }
 
     &__actions {
-        margin: -5px 0 -5px 0;
-        padding-left: base(.5);
+        opacity: var(--actionsVisibility);
+        padding: 0 base(.25);
         .btn {
             display: block;
         }
