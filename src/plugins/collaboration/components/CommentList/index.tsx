@@ -5,25 +5,26 @@ import Comment from '../Comment';
 import CommentEditor from '../CommentEditor';
 import './styles.scss';
 
-const CommentList: React.FC = () => {
+interface Props {
+    currentUser: Object|null
+}
+
+const CommentList: React.FC<Props> = ({ currentUser }) => {
     const [ comments, setComments ] = useState<Array<any>>([])
     const [ isWritting, setIsWritting ] = useState(false);
-    const { id: docId, slug } = useDocumentInfo();
+    const { id: docId } = useDocumentInfo();
     
-    const startWritting = () => {
-        setIsWritting(true);
-    }
-
-    const stopWritting = () => {
-        setIsWritting(false);
-    }
-
     const fetchComments = () => {
         fetch(`http://localhost:3000/api/comments/?where[doc.value][equals]=${docId}&sort=createdAt`)
             .then((response) => response.json())
             .then((data) => {
                 setComments(data?.docs ?? []);
             })
+    }
+
+    const afterNewComment = () => {
+        fetchComments();
+        setIsWritting(false);
     }
 
     useEffect(() => {
@@ -34,17 +35,20 @@ const CommentList: React.FC = () => {
         <ul className="comment-list">
             {comments.map((comment, index) => (
                 <li key={index}>
-                    <Comment {...comment} />
+                    <Comment {...comment} currentUser={currentUser} />
                 </li>
             ))}
             { isWritting && 
                 <li>
-                    <CommentEditor docId={docId} slug={slug} handleExit={stopWritting} handleSuccess={() => fetchComments()} />
+                    <CommentEditor handleExit={() => setIsWritting(false)} handleSuccess={afterNewComment} />
                 </li>
             }
         </ul>
     ) : (
-        'No comments yet.'
+        <div className="comment-list">
+            It's pretty quiet over here...
+            {/* TODO handle i18n */}
+        </div>
     );
 
     return (
@@ -53,14 +57,14 @@ const CommentList: React.FC = () => {
             { !isWritting &&
                 <Button
                     buttonStyle="secondary"
-                    // icon="plus"
                     size="small"
                     type="button"
                     onClick={() => {
-                        startWritting();
+                        setIsWritting(true);
                     }}
                 >
                     Add comment
+                    {/* TODO handle i18n */}
                 </Button>
             }
         </div>

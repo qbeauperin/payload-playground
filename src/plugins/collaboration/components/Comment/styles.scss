@@ -1,7 +1,17 @@
+@import 'payload/scss/index.scss';
+
 .comment {
+    position: relative;
+    display: flex;
+
+    &__wrap {
+        flex: 1;
+    }
+
     &__header {
         display: flex;
         margin-bottom: 5px;
+        align-items: baseline;
     }
 
     &__user, &__date {
@@ -25,5 +35,13 @@
 
     &__content {
         line-height: 15px;
+    }
+
+    &__actions {
+        margin: -5px 0 -5px 0;
+        padding-left: base(.5);
+        .btn {
+            display: block;
+        }
     }
 }
