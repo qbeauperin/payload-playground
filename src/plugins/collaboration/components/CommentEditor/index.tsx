@@ -58,6 +58,7 @@ const CommentEditor: React.FC<Props> = ({ id, content = '', respondTo, onExit, o
                             data-value={draft || ''}
                         />
                         <textarea
+                            autoFocus 
                             className="textarea-element"
                             id="field-new-comment"
                             value={draft || ''}
