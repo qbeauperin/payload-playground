@@ -11,7 +11,7 @@ interface Props {
     onSuccess?: Function, 
 }
 
-const CommentEditor: React.FC<Props> = ({ id, content = '', respondTo, onExit, onSuccess }) => {
+const MessageEditor: React.FC<Props> = ({ id, content = '', respondTo, onExit, onSuccess }) => {
     const [ draft, setDraft ] = useState(content);
     const { id: docId, slug } = useDocumentInfo();
 
@@ -20,8 +20,8 @@ const CommentEditor: React.FC<Props> = ({ id, content = '', respondTo, onExit, o
     }
 
     const handleSubmit = () => {
-        const path = `http://localhost:3000/api/comments/${id ?? ''}`;
-        const body = Object.assign( {"comment": draft}, id ? {} : {
+        const path = `http://localhost:3000/api/messages/${id ?? ''}`;
+        const body = Object.assign( {"message": draft}, id ? {} : {
             "doc": {
                 "relationTo": slug,
                 "value": docId
@@ -40,7 +40,7 @@ const CommentEditor: React.FC<Props> = ({ id, content = '', respondTo, onExit, o
             .then((data) => {
                 if (data?.doc) {
                     setDraft('');
-                    onSuccess(data.doc.comment);
+                    onSuccess(data.doc.message);
                 } else {
                     console.error(data);
                     // TODO Handle error
@@ -49,9 +49,9 @@ const CommentEditor: React.FC<Props> = ({ id, content = '', respondTo, onExit, o
     }
 
     return (
-        <div className="comment-editor">
+        <div className="message-editor">
             <div className="field-type textarea">
-                <label className="textarea-outer" htmlFor="field-new-comment">
+                <label className="textarea-outer" htmlFor="field-new-message">
                     <div className="textarea-inner">
                         <div
                             className="textarea-clone"
@@ -60,14 +60,14 @@ const CommentEditor: React.FC<Props> = ({ id, content = '', respondTo, onExit, o
                         <textarea
                             autoFocus 
                             className="textarea-element"
-                            id="field-new-comment"
+                            id="field-new-message"
                             value={draft || ''}
                             onChange={handleTyping}
                         />
                     </div>
                 </label>
             </div>
-            <div className="comment-editor__actions">
+            <div className="message-editor__actions">
                 { onExit && 
                     <Button
                         buttonStyle="secondary"
@@ -91,4 +91,4 @@ const CommentEditor: React.FC<Props> = ({ id, content = '', respondTo, onExit, o
     )
 }
 
-export default CommentEditor;
+export default MessageEditor;

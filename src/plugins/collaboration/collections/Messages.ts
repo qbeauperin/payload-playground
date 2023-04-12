@@ -1,12 +1,12 @@
 import { CollectionConfig } from 'payload/types';
 
-const comments = (collections: Array<string>): CollectionConfig => {
-    const Comments: CollectionConfig = {
-        slug: 'comments',
+const messages = (collections: Array<string>): CollectionConfig => {
+    const Messages: CollectionConfig = {
+        slug: 'messages',
         admin: {
             group: 'Collaboration',
-            defaultColumns: ['comment', 'doc', 'repondingTo', 'user', 'createdAt'],
-            useAsTitle: 'comment',
+            defaultColumns: ['message', 'doc', 'repondingTo', 'user', 'createdAt'],
+            useAsTitle: 'message',
             disableDuplicate: true,
         },
         access: {
@@ -14,14 +14,14 @@ const comments = (collections: Array<string>): CollectionConfig => {
         },
         fields: [
             {
-                name: 'comment',
+                name: 'message',
                 type: 'textarea',
                 required: true,
             },
             {
                 name: 'repondingTo',
                 type: 'relationship',
-                relationTo: 'comments',
+                relationTo: 'messages',
                 hasMany: false,
                 admin: {
                     readOnly: true,
@@ -51,8 +51,8 @@ const comments = (collections: Array<string>): CollectionConfig => {
         ],
     };
 
-    return Comments;
+    return Messages;
 }
 
 
-export default comments;
+export default messages;

@@ -1,58 +1,58 @@
 import React, { useState, useEffect } from 'react';
 import { useDocumentInfo } from "payload/components/utilities";
 import { Button } from 'payload/components/elements';
-import Comment from '../Comment';
-import CommentEditor from '../CommentEditor';
+import Message from '../Message';
+import MessageEditor from '../MessageEditor';
 import './styles.scss';
 
 interface Props {
     currentUser: Object|null
 }
 
-const CommentList: React.FC<Props> = ({ currentUser }) => {
-    const [ comments, setComments ] = useState<Array<any>>([])
+const MessageList: React.FC<Props> = ({ currentUser }) => {
+    const [ messages, setMessages ] = useState<Array<any>>([])
     const [ isWritting, setIsWritting ] = useState(false);
     const { id: docId } = useDocumentInfo();
     
-    const fetchComments = () => {
-        fetch(`http://localhost:3000/api/comments/?where[doc.value][equals]=${docId}&sort=createdAt`)
+    const fetchMessages = () => {
+        fetch(`http://localhost:3000/api/messages/?where[doc.value][equals]=${docId}&sort=createdAt`)
             .then((response) => response.json())
             .then((data) => {
-                setComments(data?.docs ?? []);
+                setMessages(data?.docs ?? []);
             })
     }
 
-    const afterNewComment = () => {
-        fetchComments();
+    const afterNewMessage = () => {
+        fetchMessages();
         setIsWritting(false);
     }
 
     useEffect(() => {
-        fetchComments();
+        fetchMessages();
     }, [])
 
-    const list = comments.length > 0 || isWritting ? (
-        <ul className="comment-list">
-            {comments.map((comment, index) => (
+    const list = messages.length > 0 || isWritting ? (
+        <ul className="message-list">
+            {messages.map((message, index) => (
                 <li key={index}>
-                    <Comment {...comment} currentUser={currentUser} onDelete={fetchComments} />
+                    <Message {...message} currentUser={currentUser} onDelete={fetchMessages} />
                 </li>
             ))}
             { isWritting && 
                 <li>
-                    <CommentEditor onExit={() => setIsWritting(false)} onSuccess={afterNewComment} />
+                    <MessageEditor onExit={() => setIsWritting(false)} onSuccess={afterNewMessage} />
                 </li>
             }
         </ul>
     ) : (
-        <div className="comment-list">
+        <div className="message-list">
             It's pretty quiet over here...
             {/* TODO handle i18n */}
         </div>
     );
 
     return (
-        <div className="comment-list">
+        <div className="message-list">
             {list}
             { !isWritting &&
                 <Button
@@ -63,7 +63,7 @@ const CommentList: React.FC<Props> = ({ currentUser }) => {
                         setIsWritting(true);
                     }}
                 >
-                    Add comment
+                    Add message
                     {/* TODO handle i18n */}
                 </Button>
             }
@@ -71,4 +71,4 @@ const CommentList: React.FC<Props> = ({ currentUser }) => {
     )
 }
 
-export default CommentList;
+export default MessageList;

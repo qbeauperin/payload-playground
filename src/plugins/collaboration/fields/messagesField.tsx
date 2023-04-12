@@ -3,9 +3,9 @@ import { useDocumentInfo } from "payload/components/utilities";
 import { Label } from 'payload/components/forms';
 import { Field } from 'payload/types';
 import { UIField } from 'payload/dist/fields/config/types';
-import CommentList from '../components/CommentList';
+import MessageList from '../components/MessageList';
 
-const CommentsField: React.FC<UIField> = ({ label }) => {
+const MessagesField: React.FC<UIField> = ({ label }) => {
     const [ currentUser, setCurrentUser ] = useState(null);
     const { id: docId } = useDocumentInfo();
 
@@ -24,21 +24,21 @@ const CommentsField: React.FC<UIField> = ({ label }) => {
     return docId ? (
         <div className="collaboration">
             <Label label={label} />
-            <CommentList currentUser={currentUser} />
+            <MessageList currentUser={currentUser} />
         </div>
     ) : false;
 }
 
-const commentsField: Field = {
-    name: 'comments',
-    label: 'Comments',
+const messagesField: Field = {
+    name: 'messages',
+    label: 'Messages',
     type: 'ui',
     admin: {
         position: 'sidebar',
         components: {
-            Field: CommentsField
+            Field: MessagesField
         },
     },
 };
 
-export default commentsField;
+export default messagesField;

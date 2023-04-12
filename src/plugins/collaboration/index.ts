@@ -1,8 +1,8 @@
 import payload from "payload";
 import { Config, Plugin } from 'payload/config';
 import { PluginOptions } from './types';
-import comments from "./collections/Comments";
-import commentsField from "./fields/commentsField";
+import messages from "./collections/Messages";
+import messagesField from "./fields/messagesField";
 import "./styles.scss";
 
 export const collaboration = (pluginOptions: PluginOptions) => (incomingConfig: Config): Config => {
@@ -26,11 +26,11 @@ export const collaboration = (pluginOptions: PluginOptions) => (incomingConfig: 
                     ...collection,
                     fields: [
                         ...collection.fields,
-                        commentsField,
+                        messagesField,
                     ],
                 };
             }),
-            comments(pluginOptions.collections),
+            messages(pluginOptions.collections),
         ]
     };
 

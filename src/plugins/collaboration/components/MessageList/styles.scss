@@ -1,6 +1,6 @@
 @import 'payload/scss/index.scss';
 
-.comment-list {
+.message-list {
     margin: 0;
     padding: 0;
     list-style: none;
@@ -20,7 +20,7 @@
             margin-bottom: base(.5);
         }
 
-        &:not(:has(.comment-editor)):before {
+        &:not(:has(.message-editor)):before {
             content: '';
             position: absolute;
             top: 0;
