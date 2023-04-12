@@ -7,11 +7,11 @@ interface Props {
     id?: string,
     content?: string,
     respondTo?: string,
-    handleExit?: Function, 
-    handleSuccess?: Function, 
+    onExit?: Function, 
+    onSuccess?: Function, 
 }
 
-const CommentEditor: React.FC<Props> = ({ id, content = '', respondTo, handleExit, handleSuccess }) => {
+const CommentEditor: React.FC<Props> = ({ id, content = '', respondTo, onExit, onSuccess }) => {
     const [ draft, setDraft ] = useState(content);
     const { id: docId, slug } = useDocumentInfo();
 
@@ -40,7 +40,7 @@ const CommentEditor: React.FC<Props> = ({ id, content = '', respondTo, handleExi
             .then((data) => {
                 if (data?.doc) {
                     setDraft('');
-                    handleSuccess(data.doc.comment);
+                    onSuccess(data.doc.comment);
                 } else {
                     console.error(data);
                     // TODO Handle error
@@ -67,11 +67,11 @@ const CommentEditor: React.FC<Props> = ({ id, content = '', respondTo, handleExi
                 </label>
             </div>
             <div className="comment-editor__actions">
-                { handleExit && 
+                { onExit && 
                     <Button
                         buttonStyle="secondary"
                         size="small"
-                        onClick={handleExit}
+                        onClick={onExit}
                     >
                         Cancel
                         {/* TODO handle i18n */}
@@ -82,7 +82,7 @@ const CommentEditor: React.FC<Props> = ({ id, content = '', respondTo, handleExi
                     size="small"
                     onClick={handleSubmit}
                 >
-                    Post
+                    { id ? "Save" : "Post" }
                     {/* TODO handle i18n */}
                 </Button>
             </div>

@@ -38,10 +38,18 @@
     }
 
     &__actions {
+        display: flex;
         opacity: var(--actionsVisibility);
-        padding: 0 base(.25);
+        padding: 0 0 0 base(.25);
+
         .btn {
             display: block;
+
+            &.delete {
+                &:hover .btn__icon {
+                    background: var(--theme-error-500);
+                }
+            }
         }
     }
 }

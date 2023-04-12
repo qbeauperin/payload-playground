@@ -35,12 +35,12 @@ const CommentList: React.FC<Props> = ({ currentUser }) => {
         <ul className="comment-list">
             {comments.map((comment, index) => (
                 <li key={index}>
-                    <Comment {...comment} currentUser={currentUser} />
+                    <Comment {...comment} currentUser={currentUser} onDelete={fetchComments} />
                 </li>
             ))}
             { isWritting && 
                 <li>
-                    <CommentEditor handleExit={() => setIsWritting(false)} handleSuccess={afterNewComment} />
+                    <CommentEditor onExit={() => setIsWritting(false)} onSuccess={afterNewComment} />
                 </li>
             }
         </ul>
