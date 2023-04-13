@@ -70,6 +70,10 @@ $margin: base(.5);
                 border: 1px solid var(--theme-elevation-0);
                 display: block;
                 float: left;
+                
+                &:last-child {
+                    margin-right: base(.25);
+                }
 
                 & + img {
                     margin-left: -10px;
@@ -80,7 +84,6 @@ $margin: base(.5);
         .count {
             line-height: 20px;
             text-decoration: underline;
-            margin-left: base(.25);
         }
     }
 

@@ -13,15 +13,20 @@ const baseClass = "threadThumbnail";
 
 const ThreadThumbnail: React.FC<Props> = (props) => {
     const [ isOpen, setIsOpen ] = useState(false);
-    const uniqueUserEmails = props.messages.reduce((acc, message) => {
+    const replies = props.messages.slice(1);
+    const uniqueUserEmails = replies.reduce((acc, message) => {
         const email = message.user.email;
         return !acc.includes(email) ? [...acc, email] : acc;
     }, []);
     
     const openThread = () => {
         setIsOpen(true);
+        console.log(props);
         console.log('OPEN THE THREAD');
     };
+
+    const noMessages = "No messages.";
+    const messages = `${replies.length} ${replies.length <= 1 ? 'message' : 'messages'}`;
 
     return (
         <div className={baseClass} onClick={openThread}>
@@ -33,7 +38,7 @@ const ThreadThumbnail: React.FC<Props> = (props) => {
                     ))}
                 </div>
                 <div className="count">
-                    {`${props.messages.length} ${props.messages.length <= 1 ? 'message' : 'messages' }`}
+                    {replies.length > 0 ? messages : noMessages}
                 </div>
             </div>
         </div>
