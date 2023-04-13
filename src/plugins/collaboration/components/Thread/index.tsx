@@ -22,8 +22,11 @@ const Thread: React.FC<Props> = (props) => {
         return !acc.includes(email) ? [...acc, email] : acc;
     }, []);
 
-    const afterNewMessage = (newMessage) => {
+    const onMessageAdded = (newMessage:string) => {
         setReplies([...replies, newMessage]);
+    }
+    const onMessageDeleted = (deletedMessageId:string) => {
+        setReplies(replies.filter(message => message.id !== deletedMessageId));
     }
 
     const noMessages = "No messages.";
@@ -48,9 +51,9 @@ const Thread: React.FC<Props> = (props) => {
                 {isOpen && 
                     <div className={`${baseClass}__messages`}>
                         {replies.map((message) => (
-                            <Message key={message.id} {...message} currentUser={props.currentUser} pluginOptions={props.pluginOptions} />
+                            <Message key={message.id} {...message} currentUser={props.currentUser} pluginOptions={props.pluginOptions} onDelete={onMessageDeleted} />
                         ))}
-                        <MessageEditor onSuccess={afterNewMessage} thread={props.id} />
+                        <MessageEditor onSuccess={onMessageAdded} thread={props.id} />
                     </div>
                 }
                 {isOpen && 

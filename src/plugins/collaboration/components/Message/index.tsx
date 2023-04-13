@@ -48,7 +48,7 @@ const Message: React.FC<Props> = ({ id, content = '', createdAt = '', user, curr
                         console.error(data);
                         // TODO Handle error
                     }else{
-                        onDelete();
+                        onDelete(id);
                     }
                 });
         }

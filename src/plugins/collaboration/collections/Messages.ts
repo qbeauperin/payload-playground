@@ -87,10 +87,12 @@ const messages = ({ collections, users: { collection:usersCollection } }: Plugin
                                     }   
                                 });
                                 if (!update) {
-                                    // TODO handle error
+                                    console.error('Message update in message afterChange failed');
+                                    // TODO handle error properly
                                 }
                             }else{
-                                // TODO handle error
+                                console.error('Thread create in message afterChange failed');
+                                // TODO handle error properly
                             }
                         }
                         // If message has a thread, add it to the thread's messages
@@ -101,7 +103,8 @@ const messages = ({ collections, users: { collection:usersCollection } }: Plugin
                                 depth: 0,
                             });
                             if(!thread) {
-                                // TODO handle error
+                                console.error('Thread findById in message afterChange failed');
+                                // TODO handle error properly
                             }
                             const update = await payload.update({
                                 collection: 'threads',
@@ -112,12 +115,64 @@ const messages = ({ collections, users: { collection:usersCollection } }: Plugin
                                 }
                             });
                             if(!update){
-                                // TODO handle error
+                                console.error('Thread update in message afterChange failed');
+                                // TODO handle error properly
                             }
                         }
                     }
 
                     return message;
+                }
+            ],
+            beforeDelete: [
+                async ({ id, req: { payload } }) => {
+                    const message = await payload.findByID({
+                        collection: 'messages',
+                        id: id,
+                        depth: 1,
+                    });
+                    console.log('// message data: ', message);
+                    
+                    if (!message) {
+                        console.error('Message findById in message beforeDelete failed');
+                        // TODO handle error properly
+                    }
+                    if(message?.thread){
+                        const messages = [...message.thread?.messages];
+                        if (messages?.length > 1){
+                            // If there's more than one message, remove this one
+                            const messageIndex = messages.indexOf(id);
+                            if(messageIndex >= 0){
+                                messages.splice(messageIndex, 1);
+                                const update = await payload.update({
+                                    collection: 'threads',
+                                    id: message.thread.id,
+                                    data: {
+                                        resolved: false,
+                                        messages: messages,
+                                    }
+                                });
+                                if (!update) {
+                                    console.error('Thread update in message beforeDelete failed');
+                                    // TODO handle error properly
+                                }
+                            }
+                        }else{
+                            // If this is the only message in the thread, delete the thread as well
+                            const deleteResult = payload.delete({
+                                collection: 'threads',
+                                where: {
+                                    id: {
+                                        equals: message.thread.id,
+                                    }
+                                },
+                            });
+                            if(!deleteResult){
+                                console.error('Thread delete in message beforeDelete failed');
+                                // TODO handle error properly
+                            }
+                        }
+                    }
                 }
             ]
         }
