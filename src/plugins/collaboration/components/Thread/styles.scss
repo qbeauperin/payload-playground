@@ -3,7 +3,7 @@
 @mixin pseudo-line {
     content: '';
     position: absolute;
-    background-color: var(--theme-elevation-100);
+    background-color: var(--theme-elevation-150);
 }
 
 $avatarWidth: 32px;
@@ -11,10 +11,20 @@ $linePadding: base(.25);
 $margin: base(.5);
 
 
-.threadThumbnail {
+.thread {
     position: relative;
     cursor: pointer;
     --isHovered: 0;
+    --sideLineHeight: calc(100% - 10px);
+
+    &--open {
+        cursor: default;
+        --sideLineHeight: calc(100% - 40px);
+
+        & .thread__replies:after {
+            content: none;
+        }
+    }
 
     &:before {
         content: '';
@@ -28,7 +38,7 @@ $margin: base(.5);
         opacity: var(--isHovered);
     }
 
-    .message {
+    & > .message {
         padding-bottom: calc($margin/2);
 
         &:before {
@@ -40,11 +50,9 @@ $margin: base(.5);
         }
     }
 
-    &__messages {
+    &__replies {
         position: relative;
         padding-left: calc($avatarWidth + $margin);
-        display: flex;
-        align-items: center;
 
         &:before,
         &:after {
@@ -55,7 +63,7 @@ $margin: base(.5);
             top: 0;
             left: calc($avatarWidth/2);
             width: 1px;
-            height: calc(100% - 10px);
+            height: var(--sideLineHeight);
         }
 
         &:after {
@@ -65,25 +73,47 @@ $margin: base(.5);
             width: calc(($avatarWidth/2) + $margin - $linePadding);
         }
 
-        .avatars {
-            img {
-                border: 1px solid var(--theme-elevation-0);
-                display: block;
-                float: left;
-                
-                &:last-child {
-                    margin-right: base(.25);
-                }
+        &-overview {
+            display: flex;
+            align-items: center;
 
-                & + img {
-                    margin-left: -10px;
+            .avatars {
+                img {
+                    border: 1px solid var(--theme-elevation-0);
+                    display: block;
+                    float: left;
+                    
+                    &:last-child {
+                        margin-right: base(.25);
+                    }
+    
+                    & + img {
+                        margin-left: -10px;
+                    }
                 }
+            }
+    
+            .count {
+                line-height: 20px;
+                text-decoration: underline;
             }
         }
 
-        .count {
-            line-height: 20px;
-            text-decoration: underline;
+        .collapse{
+            position: absolute;
+            transform: rotate(180deg);
+            bottom: 0;
+            margin: 0;
+            left: -(base(.25));
+            opacity: .5;
+        }
+    }
+
+    &__messages {
+        padding-top: base(.5);
+        
+        .message {
+            margin-bottom: base(.5);
         }
     }
 

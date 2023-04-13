@@ -1,11 +1,9 @@
-#nav-group-Collaboration {
-    display: none;
-}
-
+// TODO to remove once https: //github.com/payloadcms/payload/issues/2478 has been fixed
 .collection-edit__sidebar-fields .status {
     margin-bottom: 1.9230769231rem;
 }
 
+// TODO open a github issue for it to be added to core
 .collection-edit__document-actions {
     background: var(--theme-bg);
 }

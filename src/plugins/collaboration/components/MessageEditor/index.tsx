@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from 'react';
+import React, { useState, useEffect, ChangeEvent, useRef } from 'react';
 import { useDocumentInfo } from "payload/components/utilities";
 import { Button } from 'payload/components/elements';
 import './styles.scss';
@@ -8,15 +8,21 @@ interface Props {
     content?: string,
     respondTo?: string,
     onExit?: Function, 
-    onSuccess?: Function, 
+    onSuccess?: Function,
+    thread?: string
 }
 
 const baseClass = "messageEditor";
 
-const MessageEditor: React.FC<Props> = ({ id: messageId, content = '', respondTo, onExit, onSuccess }) => {
+const MessageEditor: React.FC<Props> = ({ id: messageId, content = '', respondTo, onExit, onSuccess, thread }) => {
     const [ draft, setDraft ] = useState(content);
     const [ isFocused, setIsFocused ] = useState(false);
     const { id: docId, slug } = useDocumentInfo();
+    const textarea = useRef(null);
+
+    useEffect(() => {
+        if (messageId && textarea.current) textarea.current.focus();
+    }, []);
 
     const handleTyping = (e: ChangeEvent<HTMLTextAreaElement>) => {
         setDraft(e?.target?.value)
@@ -28,8 +34,10 @@ const MessageEditor: React.FC<Props> = ({ id: messageId, content = '', respondTo
             doc: {
                 relationTo: slug,
                 value: docId
-            }
-        });
+            },
+        }, thread ? {
+            thread: thread
+        } : {});
         const options = {
             method: messageId ? 'PATCH' : 'POST',
             headers: {
@@ -43,7 +51,7 @@ const MessageEditor: React.FC<Props> = ({ id: messageId, content = '', respondTo
             .then((data) => {
                 if (data?.doc) {
                     setDraft('');
-                    onSuccess(data.doc.message);
+                    onSuccess(data.doc);
                 } else {
                     console.error(data);
                     // TODO Handle error
@@ -67,12 +75,13 @@ const MessageEditor: React.FC<Props> = ({ id: messageId, content = '', respondTo
                             data-value={draft || ''}
                         />
                         <textarea
+                            ref={textarea}
                             className="textarea-element"
                             id="field-new-message"
                             value={draft || ''}
                             onChange={handleTyping}
                             onFocus={() => setIsFocused(true)}
-                            placeholder="Create a new thread" // TODO handle i18n + handle create/edit posts
+                            placeholder={thread ? "Respond to thread" : "Create a new thread"} // TODO handle i18n + handle create/edit posts
                         />
                     </div>
                 </label>
