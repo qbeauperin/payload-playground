@@ -5,25 +5,33 @@ import { Message } from '../../types';
 import './styles.scss';
 
 interface Props {
-    id?: string,
-    content?: string,
-    respondTo?: string,
-    onExit?: Function, 
-    onSuccess?(message: Message): any,
-    thread?: string
+    id?: string;
+    content?: string;
+    respondTo?: string;
+    onExit?: Function; 
+    onSuccess?(message: Message): any;
+    thread?: string;
+    autofocus: boolean;
 }
 
 const baseClass = "messageEditor";
 
-const MessageEditor: React.FC<Props> = ({ id: messageId, content = '', respondTo, onExit, onSuccess, thread }) => {
-    const [ draft, setDraft ] = useState(content);
+const MessageEditor: React.FC<Props> = ({ id: messageId, content = '', respondTo, onExit, onSuccess, thread, autofocus = true }) => {
+    const [ draft, setDraft ] = useState('');
     const [ isFocused, setIsFocused ] = useState(false);
     const { id: docId, slug } = useDocumentInfo();
     const textarea = useRef(null);
 
     useEffect(() => {
-        if (messageId && textarea.current) textarea.current.focus();
+        if (autofocus && (messageId || thread)){
+            textarea.current.focus();
+        }
     }, []);
+
+    const onTextareaFocus = () => {
+        setDraft(content);
+        setIsFocused(true);
+    }
 
     const handleTyping = (e: ChangeEvent<HTMLTextAreaElement>) => {
         setDraft(e?.target?.value)
@@ -73,15 +81,15 @@ const MessageEditor: React.FC<Props> = ({ id: messageId, content = '', respondTo
                     <div className="textarea-inner">
                         <div
                             className="textarea-clone"
-                            data-value={draft || ''}
+                            data-value={draft}
                         />
                         <textarea
                             ref={textarea}
                             className="textarea-element"
                             id="field-new-message"
-                            value={draft || ''}
+                            value={draft}
                             onChange={handleTyping}
-                            onFocus={() => setIsFocused(true)}
+                            onFocus={onTextareaFocus}
                             placeholder={thread ? "Reply..." : "New thread..."} // TODO handle i18n + handle create/edit posts
                         />
                     </div>

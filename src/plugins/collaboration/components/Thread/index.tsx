@@ -62,7 +62,7 @@ const Thread: React.FC<Props> = (props) => {
                         {replies.map((message) => (
                             <Message key={message.id} {...message} currentUser={props.currentUser} pluginOptions={props.pluginOptions} onEdit={onMessageEdit} onDelete={onMessageDeleted} />
                         ))}
-                        <MessageEditor onSuccess={onMessageAdded} thread={props.id} />
+                        <MessageEditor onSuccess={onMessageAdded} thread={props.id} autofocus={replies.length <= 0} />
                     </div>
                 }
                 {isOpen && 
