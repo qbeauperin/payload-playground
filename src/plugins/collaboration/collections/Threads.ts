@@ -21,6 +21,9 @@ const threads = ({ collections, users: { collection: usersCollection } }: Plugin
                 relationTo: collections,
                 hasMany: false,
                 required: true,
+                admin: {
+                    allowCreate: false,
+                },
             },
             {
                 name: 'messages',
@@ -29,6 +32,9 @@ const threads = ({ collections, users: { collection: usersCollection } }: Plugin
                 hasMany: true,
                 required: true,
                 min: 1,
+                admin: {
+                    allowCreate: false,
+                },
             },
             {
                 name: 'user',
@@ -39,6 +45,7 @@ const threads = ({ collections, users: { collection: usersCollection } }: Plugin
                 defaultValue: async ({ user }) => user?.id,
                 admin: {
                     readOnly: true,
+                    allowCreate: false,
                 },
             },
             {
@@ -47,6 +54,22 @@ const threads = ({ collections, users: { collection: usersCollection } }: Plugin
                 defaultValue: false,
             },
         ],
+        hooks: {
+            afterDelete: [
+                async ({ doc: thread, req: { payload } }) => {
+                    const deleteResult = payload.delete({
+                        collection: 'messages',
+                        where: {
+                            id: {
+                                in: thread.messages.map(message => message.id).join(','),
+                            }
+                        },
+                    });
+
+                    console.log('// deleteResult: ', deleteResult)
+                }
+            ],
+        },
     };
 
     return Threads;

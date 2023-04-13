@@ -26,6 +26,9 @@ const messages = ({ collections, users: { collection:usersCollection } }: Plugin
                 relationTo: collections,
                 hasMany: false,
                 required: true,
+                admin: {
+                    allowCreate: false,
+                },
             },
             {
                 name: 'thread',
@@ -33,6 +36,9 @@ const messages = ({ collections, users: { collection:usersCollection } }: Plugin
                 relationTo: 'threads',
                 hasMany: false,
                 required: false,
+                admin: {
+                    allowCreate: false,
+                },
             },
             {
                 name: 'repondingTo',
@@ -40,7 +46,7 @@ const messages = ({ collections, users: { collection:usersCollection } }: Plugin
                 relationTo: 'messages',
                 hasMany: false,
                 admin: {
-                    readOnly: true,
+                    allowCreate: false,
                 },
             },
             {
@@ -52,6 +58,7 @@ const messages = ({ collections, users: { collection:usersCollection } }: Plugin
                 defaultValue: async ({ user }) => user.id,
                 admin: {
                     readOnly: true,
+                    allowCreate: false,
                 },
             },
         ],
