@@ -52,8 +52,8 @@ const Thread: React.FC<Props> = (props) => {
                         <div className="count">
                             {replies.length > 0 ? messages : noMessages}
                         </div>
-                        <svg class="icon icon--chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25 25">
-                            <path class="stroke" d="M9 10.5L12.5 14.5L16 10.5"></path>
+                        <svg className="icon icon--chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25 25">
+                            <path className="stroke" d="M9 10.5L12.5 14.5L16 10.5"></path>
                         </svg>
                     </div>
                 }
