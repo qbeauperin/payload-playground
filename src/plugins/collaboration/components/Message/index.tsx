@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { PluginOptions } from '../../types';
 import { Button } from 'payload/components/elements';
 import MessageEditor from '../MessageEditor';
+import getFormatedDate from '../../../utilities/getFormatedDate';
 import './styles.scss';
 
 interface Props {
@@ -19,14 +20,7 @@ const Message: React.FC<Props> = ({ id, content = '', createdAt = '', user, curr
     const [ isEditing, setIsEditing ] = useState(false);
     const [ messageContent, setMessageContent ] = useState(content);
     const currentUserIsAuthor = user?.id && currentUser?.id ? user.id == currentUser.id : false;
-    const date = new Date(createdAt);
-    const fullDate = date.toLocaleDateString('en', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit',
-    }); // TODO handle i18n
+    const { shortDate, fullDate } = getFormatedDate(createdAt);
 
     const afterEdit = (newMessage:string) => {
         setMessageContent(newMessage);
@@ -60,7 +54,7 @@ const Message: React.FC<Props> = ({ id, content = '', createdAt = '', user, curr
             <div className="message__wrap">
                 <div className="message__header">
                     <div className="message__user">{ user[ pluginOptions.users.displayField ] }</div>
-                    <div className="message__date" title={fullDate}>{fullDate}</div>
+                    <div className="message__date" title={ fullDate }>{ shortDate }</div>
                 </div>
                 {!isEditing &&
                     <div className="message__content">
