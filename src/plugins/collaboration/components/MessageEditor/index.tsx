@@ -11,7 +11,7 @@ interface Props {
     onSuccess?: Function, 
 }
 
-const MessageEditor: React.FC<Props> = ({ id, content = '', respondTo, onExit, onSuccess }) => {
+const MessageEditor: React.FC<Props> = ({ id: messageId, content = '', respondTo, onExit, onSuccess }) => {
     const [ draft, setDraft ] = useState(content);
     const { id: docId, slug } = useDocumentInfo();
 
@@ -20,15 +20,15 @@ const MessageEditor: React.FC<Props> = ({ id, content = '', respondTo, onExit, o
     }
 
     const handleSubmit = () => {
-        const path = `http://localhost:3000/api/messages/${id ?? ''}`;
-        const body = Object.assign( {"message": draft}, id ? {} : {
-            "doc": {
-                "relationTo": slug,
-                "value": docId
+        const path = `http://localhost:3000/api/messages/${messageId ?? ''}`;
+        const body = Object.assign( { content: draft }, messageId ? {} : {
+            doc: {
+                relationTo: slug,
+                value: docId
             }
         });
         const options = {
-            method: id ? 'PATCH' : 'POST',
+            method: messageId ? 'PATCH' : 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -83,7 +83,7 @@ const MessageEditor: React.FC<Props> = ({ id, content = '', respondTo, onExit, o
                     size="small"
                     onClick={handleSubmit}
                 >
-                    { id ? "Save" : "Post" }
+                    { messageId ? "Save" : "Post" }
                     {/* TODO handle i18n */}
                 </Button>
             </div>

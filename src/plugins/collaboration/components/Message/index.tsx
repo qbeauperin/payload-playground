@@ -5,7 +5,7 @@ import MessageEditor from '../MessageEditor';
 
 interface Props {
     id?: string,
-    message: string,
+    content: string,
     createdAt: string,
     user: Object|null,
     currentUser: Object|null,
@@ -13,9 +13,9 @@ interface Props {
     onDelete?: Function,
 }
 
-const Message: React.FC<Props> = ({ id, message = '', createdAt = '', user, currentUser, respondTo, onDelete }) => {
+const Message: React.FC<Props> = ({ id, content = '', createdAt = '', user, currentUser, respondTo, onDelete }) => {
     const [ isEditing, setIsEditing ] = useState(false);
-    const [ messageContent, setMessageContent ] = useState(message);
+    const [ messageContent, setMessageContent ] = useState(content);
     const currentUserIsAuthor = user?.id && currentUser?.id ? user.id == currentUser.id : false;
     const date = new Date(createdAt);
     const fullDate = date.toLocaleDateString('en', {

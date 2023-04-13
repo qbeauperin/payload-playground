@@ -35,7 +35,6 @@ const messages = ({ collections, users: { collection:usersCollection } }: Plugin
                 type: 'relationship',
                 relationTo: 'threads',
                 hasMany: false,
-                required: false,
                 admin: {
                     allowCreate: false,
                 },
@@ -68,11 +67,23 @@ const messages = ({ collections, users: { collection:usersCollection } }: Plugin
                     if(operation === 'create') {
                         // If message is threadless, create a new thread
                         if (!message?.thread){
+                            console.log('// create thread query: ', {
+                                doc: {
+                                    relationTo: message.doc.relationTo,
+                                    value: message.doc.value.id,
+                                },
+                                user: message.user.id,
+                                messages: [message.id],
+                            });
+                            
                             const thread = await payload.create({
                                 collection: 'threads',
                                 data: {
-                                    doc: message.doc,
-                                    user: message.user,
+                                    doc: {
+                                        relationTo: message.doc.relationTo,
+                                        value: message.doc.value.id,
+                                    },
+                                    user: message.user.id,
                                     messages: [ message.id ],
                                 }
                             });
