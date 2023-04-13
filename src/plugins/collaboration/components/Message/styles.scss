@@ -44,6 +44,8 @@
         display: flex;
         opacity: var(--actionsVisibility);
         padding: 0 0 0 base(.25);
+        align-items: flex-start;
+        margin-top: -(base(.2));
 
         .btn {
             display: block;
@@ -54,5 +56,8 @@
                 }
             }
         }
+    }
+
+    &--isAuthor {
     }
 }

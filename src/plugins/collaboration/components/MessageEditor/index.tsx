@@ -1,6 +1,7 @@
 import React, { useState, useEffect, ChangeEvent, useRef } from 'react';
 import { useDocumentInfo } from "payload/components/utilities";
 import { Button } from 'payload/components/elements';
+import { Message } from '../../types';
 import './styles.scss';
 
 interface Props {
@@ -8,7 +9,7 @@ interface Props {
     content?: string,
     respondTo?: string,
     onExit?: Function, 
-    onSuccess?: Function,
+    onSuccess?(message: Message): any,
     thread?: string
 }
 
@@ -81,7 +82,7 @@ const MessageEditor: React.FC<Props> = ({ id: messageId, content = '', respondTo
                             value={draft || ''}
                             onChange={handleTyping}
                             onFocus={() => setIsFocused(true)}
-                            placeholder={thread ? "Respond to thread" : "Create a new thread"} // TODO handle i18n + handle create/edit posts
+                            placeholder={thread ? "Reply..." : "New thread..."} // TODO handle i18n + handle create/edit posts
                         />
                     </div>
                 </label>

@@ -17,7 +17,7 @@ const Gravatar: React.FC<Props> = ({ email, size = 25 }) => {
     return (
         <img
             className="gravatar-account"
-            style={{ borderRadius: '50%', borderColor: 'var(--theme-elevation-0)', borderWidth: '1px' }}
+            style={{ borderRadius: '50%' }}
             src={`https://www.gravatar.com/avatar/${hash}?${query}`}
             alt="yas"
             width={size}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PluginOptions } from '../../types';
+import { Message as MessageType, PluginOptions } from '../../types';
 import { Button } from 'payload/components/elements';
 import MessageEditor from '../MessageEditor';
 import getFormatedDate from '../../../utilities/getFormatedDate';
@@ -12,7 +12,8 @@ interface Props {
     createdAt: string,
     user: Object|null,
     respondTo?: string,
-    onDelete?: Function,
+    onEdit?(id: string, newContent: string): any,
+    onDelete?(deletedMessageId: string): any,
     currentUser: Object|null,
     pluginOptions: PluginOptions,
     readOnly?: boolean
@@ -20,21 +21,20 @@ interface Props {
 
 const baseClass = "message";
 
-const Message: React.FC<Props> = ({ id, content = '', createdAt = '', user, currentUser, respondTo, onDelete, pluginOptions, readOnly = false }) => {
+const Message: React.FC<Props> = ({ id, content = '', createdAt = '', user, currentUser, respondTo, onEdit, onDelete, pluginOptions, readOnly = false }) => {
     const [ isEditing, setIsEditing ] = useState(false);
-    const [ messageContent, setMessageContent ] = useState(content);
     const currentUserIsAuthor = user?.id && currentUser?.id ? user.id == currentUser.id : false;
     const { shortDate, fullDate } = getFormatedDate(createdAt);
     const userDisplayName = user[pluginOptions.users.displayField] ? user[pluginOptions.users.displayField] : user.email;
 
-    const afterEdit = (newMessage:string) => {
-        setMessageContent(newMessage);
+    const afterEdit = (message: MessageType) => {
+        onEdit(message.id, message.content);
         setIsEditing(false);
     }
     
     const handleDelete = () => {
         if (!id) return false;
-        if (confirm(`Are you sure you want to delete this message?\n\n"${messageContent}"`)){
+        if (confirm(`Are you sure you want to delete this message?\n\n"${content}"`)){
             const path = `http://localhost:3000/api/messages/${id}`;
             const options = {
                 method: 'DELETE',
@@ -55,7 +55,7 @@ const Message: React.FC<Props> = ({ id, content = '', createdAt = '', user, curr
     }
 
     return (
-        <div className={baseClass}>
+        <div className={baseClass + (currentUserIsAuthor ? ` ${baseClass}--isAuthor` : '' )}>
             <div className={`${baseClass}__avatar`}>
                 <Gravatar email={user.email} size={32} />
             </div>
@@ -66,11 +66,11 @@ const Message: React.FC<Props> = ({ id, content = '', createdAt = '', user, curr
                 </div>
                 {!isEditing &&
                     <div className={`${baseClass}__content`}>
-                        { messageContent }
+                        { content }
                     </div>
                 }
                 {isEditing && 
-                    <MessageEditor id={id} content={messageContent} onExit={() => setIsEditing(false)} onSuccess={afterEdit} />
+                    <MessageEditor id={id} content={content} onExit={() => setIsEditing(false)} onSuccess={afterEdit} />
                 }
             </div>
             {currentUserIsAuthor && !isEditing && !readOnly &&
