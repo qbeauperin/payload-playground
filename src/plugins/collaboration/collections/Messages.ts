@@ -56,7 +56,7 @@ const messages = ({ collections, users: { collection:usersCollection } }: Plugin
                 required: true,
                 defaultValue: async ({ user }) => user.id,
                 admin: {
-                    readOnly: true,
+                    // readOnly: true,
                     allowCreate: false,
                 },
             },
@@ -104,22 +104,34 @@ const messages = ({ collections, users: { collection:usersCollection } }: Plugin
                         }
                         // If message has a thread, add it to the thread's messages
                         else {
+                            console.log('// MESSAGE HAS A THREAD, seaching for: ', message.thread.id);
+                            
                             const thread = await payload.findByID({
                                 collection: 'threads',
-                                id: message.thread,
+                                id: message.thread.id,
                                 depth: 0,
                             });
                             if(!thread) {
                                 // TODO handle error
                             }
-                            const update = await payload.update({
+                            console.log('// thread: ', thread);
+                            console.log('// update params: ', {
                                 collection: 'threads',
                                 id: message.thread,
+                                data: {
+                                    resolved: false,
+                                    messages: [...thread.messages, message.id],
+                                }
+                            });
+                            const update = await payload.update({
+                                collection: 'threads',
+                                id: message.thread.id,
                                 data: {
                                     resolved: false,
                                     messages: [ ...thread.messages, message.id ],
                                 }
                             });
+                            console.log('// update: ', update);
                             if(!update){
                                 // TODO handle error
                             }
