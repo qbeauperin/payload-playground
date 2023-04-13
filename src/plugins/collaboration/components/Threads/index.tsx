@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDocumentInfo } from "payload/components/utilities";
 import { Button } from 'payload/components/elements';
-import Thread from '../Thread';
+import ThreadThumbnail from '../ThreadThumbnail';
 import MessageEditor from '../MessageEditor';
 import { PluginOptions } from '../../types';
 import qs from 'qs';
@@ -49,7 +49,7 @@ const Threads: React.FC<Props> = (props) => {
         <ul className={ `${baseClass}__list` }>
             { threads.map((thread, index) => (
                 <li key={index}>
-                    <Thread {...thread} {...props} onDelete={fetchThreads} />
+                    <ThreadThumbnail {...thread} {...props} onDelete={fetchThreads} />
                 </li>
             )) }
             { isWritting && 

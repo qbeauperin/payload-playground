@@ -4,9 +4,11 @@
     position: relative;
     display: flex;
 
-    &__wrap {
+    &__body {
         flex: 1;
         min-width: 0;
+        padding-top: 0;
+        padding-left: base(.5);
     }
 
     &__header {

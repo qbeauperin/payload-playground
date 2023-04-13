@@ -4,6 +4,7 @@ import { Button } from 'payload/components/elements';
 import MessageEditor from '../MessageEditor';
 import getFormatedDate from '../../../utilities/getFormatedDate';
 import './styles.scss';
+import Gravatar from '../Gravatar';
 
 interface Props {
     id?: string,
@@ -14,13 +15,17 @@ interface Props {
     onDelete?: Function,
     currentUser: Object|null,
     pluginOptions: PluginOptions,
+    readOnly?: boolean
 }
 
-const Message: React.FC<Props> = ({ id, content = '', createdAt = '', user, currentUser, respondTo, onDelete, pluginOptions }) => {
+const baseClass = "message";
+
+const Message: React.FC<Props> = ({ id, content = '', createdAt = '', user, currentUser, respondTo, onDelete, pluginOptions, readOnly = false }) => {
     const [ isEditing, setIsEditing ] = useState(false);
     const [ messageContent, setMessageContent ] = useState(content);
     const currentUserIsAuthor = user?.id && currentUser?.id ? user.id == currentUser.id : false;
     const { shortDate, fullDate } = getFormatedDate(createdAt);
+    const userDisplayName = user[pluginOptions.users.displayField] ? user[pluginOptions.users.displayField] : user.email;
 
     const afterEdit = (newMessage:string) => {
         setMessageContent(newMessage);
@@ -50,14 +55,17 @@ const Message: React.FC<Props> = ({ id, content = '', createdAt = '', user, curr
     }
 
     return (
-        <div className="message">
-            <div className="message__wrap">
-                <div className="message__header">
-                    <div className="message__user">{ user[ pluginOptions.users.displayField ] }</div>
-                    <div className="message__date" title={ fullDate }>{ shortDate }</div>
+        <div className={baseClass}>
+            <div className={`${baseClass}__avatar`}>
+                <Gravatar email={user.email} size={32} />
+            </div>
+            <div className={`${baseClass}__body`}>
+                <div className={`${baseClass}__header`}>
+                    <div className={`${baseClass}__user`}>{ userDisplayName }</div>
+                    <div className={`${baseClass}__date`} title={ fullDate }>{ shortDate }</div>
                 </div>
                 {!isEditing &&
-                    <div className="message__content">
+                    <div className={`${baseClass}__content`}>
                         { messageContent }
                     </div>
                 }
@@ -65,7 +73,7 @@ const Message: React.FC<Props> = ({ id, content = '', createdAt = '', user, curr
                     <MessageEditor id={id} content={messageContent} onExit={() => setIsEditing(false)} onSuccess={afterEdit} />
                 }
             </div>
-            {currentUserIsAuthor && !isEditing && 
+            {currentUserIsAuthor && !isEditing && !readOnly &&
                 <div className="message__actions">
                     <Button
                         buttonStyle="none"

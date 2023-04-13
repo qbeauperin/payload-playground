@@ -7,7 +7,6 @@ const threads = ({ collections, users: { collection: usersCollection } }: Plugin
         admin: {
             group: 'Collaboration',
             defaultColumns: [ 'user', 'messages', 'isResolved', 'createdAt'],
-            useAsTitle: 'user',
             disableDuplicate: true,
         },
         access: {

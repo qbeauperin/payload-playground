@@ -2,14 +2,12 @@
 
 .threads {
     &__list {
-        margin: 0;
+        margin: base(.5) 0 0;
         padding: 0;
         list-style: none;
 
         li {
-            &:not(:last-child) {
-                margin-bottom: base(.5);
-            }
+            margin: base(.25) 0 $baseline 0;
         }
     }
 }
