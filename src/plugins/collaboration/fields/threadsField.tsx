@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useDocumentInfo, useAuth } from "payload/components/utilities";
+import { useDocumentInfo } from "payload/components/utilities";
+import { PluginOptions } from '../types';
 import { Label } from 'payload/components/forms';
 import { Field } from 'payload/types';
 import { UIField } from 'payload/dist/fields/config/types';
-import MessageList from '../components/MessageList';
-import { PluginOptions } from '../types';
+import Threads from '../components/Threads';
 
 const threadsFieldComponent = (pluginOptions: PluginOptions): React.FC<UIField> => {
     return ({ label }) => {
@@ -26,7 +26,7 @@ const threadsFieldComponent = (pluginOptions: PluginOptions): React.FC<UIField> 
         return docId ? (
             <div className="collaboration">
                 <Label label={label} />
-                <MessageList currentUser={currentUser} pluginOptions={pluginOptions} />
+                <Threads currentUser={currentUser} pluginOptions={pluginOptions} />
             </div>
         ) : false;
     };

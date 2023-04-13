@@ -1,0 +1,15 @@
+@import 'payload/scss/index.scss';
+
+.threads {
+    &__list {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+
+        li {
+            &:not(:last-child) {
+                margin-bottom: base(.5);
+            }
+        }
+    }
+}

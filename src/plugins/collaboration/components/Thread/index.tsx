@@ -3,21 +3,31 @@ import { useDocumentInfo } from "payload/components/utilities";
 import { Button } from 'payload/components/elements';
 import Message from '../Message';
 import MessageEditor from '../MessageEditor';
+import { Message as MessageType, PluginOptions, Thread as ThreadType } from '../../types';
 import './styles.scss';
-import { PluginOptions } from '../../types';
+import qs from 'qs';
 
-interface Props {
+interface Props extends ThreadType {
     currentUser: Object|null,
     pluginOptions: PluginOptions,
 }
 
-const MessageList: React.FC<Props> = (props) => {
-    const [ messages, setMessages ] = useState<Array<any>>([])
+const baseClass = "thread";
+
+const Thread: React.FC<Props> = (props) => {
+    const [ messages, setMessages ] = useState<Array<MessageType|string>>(props.messages);
+    const [ isOpen, setIsOpen ] = useState(false);
     const [ isWritting, setIsWritting ] = useState(false);
     const { id: docId } = useDocumentInfo();
     
     const fetchMessages = () => {
-        fetch(`http://localhost:3000/api/messages/?where[doc.value][equals]=${docId}&sort=createdAt`)
+        const query = {
+            where: {
+                thread: { equals: props.id },
+            },
+            sort: "createdAt",
+        };
+        fetch(`http://localhost:3000/api/messages/?${qs.stringify(query)}`) // TODO remove hardcoded url
             .then((response) => response.json())
             .then((data) => {
                 setMessages(data?.docs ?? []);
@@ -34,7 +44,7 @@ const MessageList: React.FC<Props> = (props) => {
     }, [])
 
     const list = messages.length > 0 || isWritting ? (
-        <ul className="message-list">
+        <ul className="messages">
             {messages.map((message, index) => (
                 <li key={index}>
                     <Message {...message} {...props} onDelete={fetchMessages} />
@@ -47,16 +57,16 @@ const MessageList: React.FC<Props> = (props) => {
             }
         </ul>
     ) : (
-        <div className="message-list">
+        <div className="messages">
             It's pretty quiet over here...
             {/* TODO handle i18n */}
         </div>
     );
 
     return (
-        <div className="message-list">
+        <div className={baseClass}>
             {list}
-            { !isWritting &&
+            { !isWritting && isOpen && 
                 <Button
                     buttonStyle="secondary"
                     size="small"
@@ -73,4 +83,4 @@ const MessageList: React.FC<Props> = (props) => {
     )
 }
 
-export default MessageList;
+export default Thread;
