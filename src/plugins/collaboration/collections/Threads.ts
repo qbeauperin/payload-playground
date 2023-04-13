@@ -42,7 +42,7 @@ const threads = ({ collections, users: { collection: usersCollection } }: Plugin
                 },
             },
             {
-                name: 'isResolved',
+                name: 'resolved',
                 type: 'checkbox',
                 defaultValue: false,
             },

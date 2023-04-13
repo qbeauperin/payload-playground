@@ -98,7 +98,8 @@ const messages = ({ collections, users: { collection:usersCollection } }: Plugin
                                 collection: 'threads',
                                 id: message.thread,
                                 data: {
-                                    messages: [ ...thread.messages, message.id ]
+                                    resolved: false,
+                                    messages: [ ...thread.messages, message.id ],
                                 }
                             });
                             if(!update){
