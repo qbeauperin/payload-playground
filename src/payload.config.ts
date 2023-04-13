@@ -21,6 +21,7 @@ export default buildConfig({
   serverURL: process.env.SERVER_URL,
   admin: {
     user: Users.slug,
+    avatar: 'gravatar',
   },
   collections: [
     Posts,
