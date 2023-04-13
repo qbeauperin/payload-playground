@@ -61,6 +61,7 @@ const MessageEditor: React.FC<Props> = ({ id: messageId, content = '', respondTo
                 if (data?.doc) {
                     setDraft('');
                     onSuccess(data.doc);
+                    handleCancel();
                 } else {
                     console.error(data);
                     // TODO Handle error
