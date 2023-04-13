@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useDocumentInfo } from "payload/components/utilities";
+import { useDocumentInfo, useAuth } from "payload/components/utilities";
 import { Label } from 'payload/components/forms';
 import { Field } from 'payload/types';
 import { UIField } from 'payload/dist/fields/config/types';

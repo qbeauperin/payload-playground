@@ -2,6 +2,7 @@ import payload from "payload";
 import { Config, Plugin } from 'payload/config';
 import { PluginOptions } from './types';
 import messages from "./collections/Messages";
+import threads from "./collections/Threads";
 import messagesField from "./fields/messagesField";
 import "./styles.scss";
 
@@ -30,7 +31,8 @@ export const collaboration = (pluginOptions: PluginOptions) => (incomingConfig: 
                     ],
                 };
             }),
-            messages(pluginOptions.collections),
+            threads(pluginOptions),
+            messages(pluginOptions),
         ]
     };
 
