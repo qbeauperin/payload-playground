@@ -4,12 +4,14 @@ import { Button } from 'payload/components/elements';
 import Message from '../Message';
 import MessageEditor from '../MessageEditor';
 import './styles.scss';
+import { PluginOptions } from '../../types';
 
 interface Props {
-    currentUser: Object|null
+    currentUser: Object|null,
+    pluginOptions: PluginOptions,
 }
 
-const MessageList: React.FC<Props> = ({ currentUser }) => {
+const MessageList: React.FC<Props> = (props) => {
     const [ messages, setMessages ] = useState<Array<any>>([])
     const [ isWritting, setIsWritting ] = useState(false);
     const { id: docId } = useDocumentInfo();
@@ -35,7 +37,7 @@ const MessageList: React.FC<Props> = ({ currentUser }) => {
         <ul className="message-list">
             {messages.map((message, index) => (
                 <li key={index}>
-                    <Message {...message} currentUser={currentUser} onDelete={fetchMessages} />
+                    <Message {...message} {...props} onDelete={fetchMessages} />
                 </li>
             ))}
             { isWritting && 

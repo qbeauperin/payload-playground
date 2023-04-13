@@ -3,7 +3,7 @@ import { Config, Plugin } from 'payload/config';
 import { PluginOptions } from './types';
 import messages from "./collections/Messages";
 import threads from "./collections/Threads";
-import messagesField from "./fields/messagesField";
+import threadsField from "./fields/threadsField";
 import "./styles.scss";
 
 export const collaboration = (pluginOptions: PluginOptions) => (incomingConfig: Config): Config => {
@@ -27,7 +27,7 @@ export const collaboration = (pluginOptions: PluginOptions) => (incomingConfig: 
                     ...collection,
                     fields: [
                         ...collection.fields,
-                        messagesField,
+                        threadsField(pluginOptions),
                     ],
                 };
             }),

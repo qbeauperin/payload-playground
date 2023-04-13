@@ -62,7 +62,7 @@ export default buildConfig({
       collections: [ 'posts', 'pages' ],
       users: {
         collection: 'users',
-        field: 'name',
+        displayField: 'name',
       },
     }),
   ]

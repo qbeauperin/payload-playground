@@ -1,19 +1,21 @@
 import React, { useState } from 'react';
+import { PluginOptions } from '../../types';
 import { Button } from 'payload/components/elements';
-import './styles.scss';
 import MessageEditor from '../MessageEditor';
+import './styles.scss';
 
 interface Props {
     id?: string,
     content: string,
     createdAt: string,
     user: Object|null,
-    currentUser: Object|null,
     respondTo?: string,
     onDelete?: Function,
+    currentUser: Object|null,
+    pluginOptions: PluginOptions,
 }
 
-const Message: React.FC<Props> = ({ id, content = '', createdAt = '', user, currentUser, respondTo, onDelete }) => {
+const Message: React.FC<Props> = ({ id, content = '', createdAt = '', user, currentUser, respondTo, onDelete, pluginOptions }) => {
     const [ isEditing, setIsEditing ] = useState(false);
     const [ messageContent, setMessageContent ] = useState(content);
     const currentUserIsAuthor = user?.id && currentUser?.id ? user.id == currentUser.id : false;
@@ -57,7 +59,7 @@ const Message: React.FC<Props> = ({ id, content = '', createdAt = '', user, curr
         <div className="message">
             <div className="message__wrap">
                 <div className="message__header">
-                    <div className="message__user">{ user?.name }</div>
+                    <div className="message__user">{ user[ pluginOptions.users.displayField ] }</div>
                     <div className="message__date" title={fullDate}>{fullDate}</div>
                 </div>
                 {!isEditing &&
