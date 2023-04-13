@@ -16,7 +16,6 @@ const baseClass = "threads";
 
 const Threads: React.FC<Props> = (props) => {
     const [ threads, setThreads ] = useState([])
-    const [ isWritting, setIsWritting ] = useState(false);
     const { id: docId } = useDocumentInfo();
     
     const fetchThreads = () => {
@@ -38,49 +37,24 @@ const Threads: React.FC<Props> = (props) => {
 
     const afterNewThread = () => {
         fetchThreads();
-        setIsWritting(false);
     }
 
     useEffect(() => {
         fetchThreads();
     }, [])
 
-    const list = threads.length > 0 || isWritting ? (
-        <ul className={ `${baseClass}__list` }>
-            { threads.map((thread, index) => (
-                <li key={index}>
-                    <ThreadThumbnail {...thread} {...props} onDelete={fetchThreads} />
-                </li>
-            )) }
-            { isWritting && 
-                <li>
-                    <MessageEditor onExit={() => setIsWritting(false)} onSuccess={afterNewThread} />
-                </li>
-            }
-        </ul>
-    ) : (
-        <div className={ `${baseClass}__list` }>
-            It's pretty quiet over here...
-            {/* TODO handle i18n */}
-        </div>
-    );
-
     return (
         <div className={ baseClass }>
-            { list }
-            { !isWritting &&
-                <Button
-                    buttonStyle="secondary"
-                    size="small"
-                    type="button"
-                    onClick={() => {
-                        setIsWritting(true);
-                    }}
-                >
-                    New thread
-                    {/* TODO handle i18n */}
-                </Button>
-            }
+            <ul className={`${baseClass}__list`}>
+                {threads.map((thread, index) => (
+                    <li key={index}>
+                        <ThreadThumbnail {...thread} {...props} onDelete={fetchThreads} />
+                    </li>
+                ))}
+                <li>
+                    <MessageEditor onSuccess={afterNewThread} />
+                </li>
+            </ul>
         </div>
     )
 }

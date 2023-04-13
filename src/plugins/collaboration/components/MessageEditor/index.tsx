@@ -11,8 +11,11 @@ interface Props {
     onSuccess?: Function, 
 }
 
+const baseClass = "messageEditor";
+
 const MessageEditor: React.FC<Props> = ({ id: messageId, content = '', respondTo, onExit, onSuccess }) => {
     const [ draft, setDraft ] = useState(content);
+    const [ isFocused, setIsFocused ] = useState(false);
     const { id: docId, slug } = useDocumentInfo();
 
     const handleTyping = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -48,8 +51,14 @@ const MessageEditor: React.FC<Props> = ({ id: messageId, content = '', respondTo
             })
     }
 
+    const handleCancel = () => {
+        setIsFocused(false);
+        setDraft('');
+        if (onExit) onExit();
+    }
+
     return (
-        <div className="message-editor">
+        <div className={baseClass + (isFocused ? ` ${baseClass}--focused` : '')}>
             <div className="field-type textarea">
                 <label className="textarea-outer" htmlFor="field-new-message">
                     <div className="textarea-inner">
@@ -58,35 +67,36 @@ const MessageEditor: React.FC<Props> = ({ id: messageId, content = '', respondTo
                             data-value={draft || ''}
                         />
                         <textarea
-                            autoFocus 
                             className="textarea-element"
                             id="field-new-message"
                             value={draft || ''}
                             onChange={handleTyping}
+                            onFocus={() => setIsFocused(true)}
+                            placeholder="Create a new thread" // TODO handle i18n + handle create/edit posts
                         />
                     </div>
                 </label>
             </div>
-            <div className="message-editor__actions">
-                { onExit && 
+            {isFocused &&
+                <div className={`${baseClass}__actions`}>
                     <Button
                         buttonStyle="secondary"
                         size="small"
-                        onClick={onExit}
+                        onClick={handleCancel}
                     >
                         Cancel
                         {/* TODO handle i18n */}
                     </Button>
-                }
-                <Button
-                    buttonStyle="primary"
-                    size="small"
-                    onClick={handleSubmit}
-                >
-                    { messageId ? "Save" : "Post" }
-                    {/* TODO handle i18n */}
-                </Button>
-            </div>
+                    <Button
+                        buttonStyle="primary"
+                        size="small"
+                        onClick={handleSubmit}
+                    >
+                        { messageId ? "Save" : "Post" }
+                        {/* TODO handle i18n */}
+                    </Button>
+                </div>
+            }
         </div>
     )
 }

@@ -1,6 +1,12 @@
 @import 'payload/scss/index.scss';
 
-.message-editor {
+.messageEditor {
+    opacity: .5;
+
+    &--focused {
+        opacity: 1;
+    }
+
     .field-type.textarea {
         margin-bottom: 0;
         padding-bottom: 0;
