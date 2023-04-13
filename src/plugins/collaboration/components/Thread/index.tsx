@@ -7,15 +7,17 @@ import { PluginOptions, Thread as ThreadType, Message as MessageType } from '../
 import './styles.scss';
 
 interface Props extends ThreadType {
-    currentUser: Object|null,
-    pluginOptions: PluginOptions,
+    currentUser: Object|null;
+    pluginOptions: PluginOptions;
+    single?: boolean;
 }
 
 const baseClass = "thread";
 
 const Thread: React.FC<Props> = (props) => {
-    const [ isOpen, setIsOpen ] = useState(false);
     const [ replies, setReplies ] = useState(props.messages.slice(1));
+    const shouldBeOpen = (props?.single ?? false) && props.messages.length > 1;
+    const [ isOpen, setIsOpen ] = useState(shouldBeOpen);
     
     const uniqueUserEmails = replies.reduce((acc: Array<MessageType>, message: MessageType) => {
         const email = message.user.email; // TODO use the User type dynamically based on the plugin config

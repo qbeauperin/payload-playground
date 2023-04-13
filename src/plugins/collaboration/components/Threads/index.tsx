@@ -47,7 +47,7 @@ const Threads: React.FC<Props> = (props) => {
             <ul className={`${baseClass}__list`}>
                 {threads.map((thread, index) => (
                     <li key={index}>
-                        <Thread {...thread} {...props} onDelete={fetchThreads} />
+                        <Thread {...thread} {...props} onDelete={fetchThreads} single={threads.length <= 1} />
                     </li>
                 ))}
                 <li>
