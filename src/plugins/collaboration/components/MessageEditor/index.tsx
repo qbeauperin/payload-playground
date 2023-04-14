@@ -18,35 +18,64 @@ const baseClass = "messageEditor";
 
 const MessageEditor: React.FC<Props> = ({ id: messageId, content = '', respondTo, onExit, onSuccess, thread, autofocus = true }) => {
     const [ draft, setDraft ] = useState('');
+    const [ isReadyToSubmit, setIsReadyToSubmit ] = useState(false);
     const [ isFocused, setIsFocused ] = useState(false);
     const { id: docId, slug } = useDocumentInfo();
+    const component = useRef(null);
     const textarea = useRef(null);
 
     useEffect(() => {
+        // Autofocus textarea when needed
         if (autofocus && (messageId || thread)){
             textarea.current.focus();
         }
+
+        // Listen to clicks on the whole document
+        document.addEventListener('click', handleClicks, true);
+        return () => {
+            document.removeEventListener('click', handleClicks, true);
+        };
     }, []);
 
+    const handleClicks = (event) => {
+        // If click is outside of the component
+        if (component.current && !component.current.contains(event.target)) {
+            setIsFocused(false);
+        }
+    }
+
+    useEffect(() => {
+        setIsReadyToSubmit(!!draft.trim());
+    }, [draft])
+
     const onTextareaFocus = () => {
-        setDraft(content);
+        setDraft(draft ? draft : content);
         setIsFocused(true);
     }
 
     const handleTyping = (e: ChangeEvent<HTMLTextAreaElement>) => {
-        setDraft(e?.target?.value)
+        setDraft(e?.target?.value);
     }
 
     const handleSubmit = () => {
+        // Check that content isn't empty
+        if (!draft.trim()){
+            return false;
+        }
+
+        // Create or update message
         const path = `http://localhost:3000/api/messages/${messageId ?? ''}`;
-        const body = Object.assign( { content: draft }, messageId ? {} : {
-            doc: {
-                relationTo: slug,
-                value: docId
-            },
-        }, thread ? {
-            thread: thread
-        } : {});
+        const body = Object.assign( 
+            { content: draft }, 
+            messageId ? {} : {
+                doc: {
+                    relationTo: slug,
+                    value: docId
+                },
+            }, thread ? {
+                thread: thread
+            } : {}
+        );
         const options = {
             method: messageId ? 'PATCH' : 'POST',
             headers: {
@@ -76,7 +105,7 @@ const MessageEditor: React.FC<Props> = ({ id: messageId, content = '', respondTo
     }
 
     return (
-        <div className={baseClass + (isFocused ? ` ${baseClass}--focused` : '')}>
+        <div className={baseClass + (isFocused ? ` ${baseClass}--focused` : '')} ref={component}>
             <div className="field-type textarea">
                 <label className="textarea-outer" htmlFor="field-new-message">
                     <div className="textarea-inner">
@@ -110,8 +139,9 @@ const MessageEditor: React.FC<Props> = ({ id: messageId, content = '', respondTo
                         buttonStyle="primary"
                         size="small"
                         onClick={handleSubmit}
+                        disabled={!isReadyToSubmit}
                     >
-                        { messageId ? "Save" : "Post" }
+                        { messageId ? "Save" : "Send" }
                         {/* TODO handle i18n */}
                     </Button>
                 </div>
