@@ -3,20 +3,22 @@ import { Button } from 'payload/components/elements';
 import Message from '../Message';
 import Gravatar from '../Gravatar';
 import MessageEditor from '../MessageEditor';
-import { PluginOptions, Thread as ThreadType, Message as MessageType } from '../../types';
+import { PluginOptions, Message as MessageType } from '../../types';
 import './styles.scss';
 
-interface Props extends ThreadType {
+interface Props extends MessageType {
     currentUser: Object|null;
     pluginOptions: PluginOptions;
     single?: boolean;
+    onDelete(id:string): any;
 }
 
 const baseClass = "thread";
 
 const Thread: React.FC<Props> = (props) => {
-    const [ replies, setReplies ] = useState(props.messages.slice(1));
-    const shouldBeOpen = (props?.single ?? false) && props.messages.length > 1;
+    const [ threadMessage, setThreadMessage ] = useState(props);
+    const [ replies, setReplies ] = useState(props.children);
+    const shouldBeOpen = (props?.single ?? false) && props.children.length > 0;
     const [ isOpen, setIsOpen ] = useState(shouldBeOpen);
     
     const uniqueUserEmails = replies.reduce((acc: Array<MessageType>, message: MessageType) => {
@@ -24,7 +26,15 @@ const Thread: React.FC<Props> = (props) => {
         return !acc.includes(email) ? [...acc, email] : acc;
     }, []);
 
-    const onMessageAdded = (newMessage:string) => {
+    const onThreadEdit = (id: string, newContent: string) => {
+        setThreadMessage({...props, content: newContent});
+    }
+
+    const onThreadDelete = () => {
+        props.onDelete(props.id);
+    }
+
+    const onMessageAdd = (newMessage:Message) => {
         setReplies([...replies, newMessage]);
     }
     const onMessageEdit = (id:string, newContent:string) => {
@@ -42,7 +52,14 @@ const Thread: React.FC<Props> = (props) => {
 
     return (
         <div className={baseClass + (isOpen ? ` ${baseClass}--open` : '')} onClick={() => !isOpen ? setIsOpen(true) : false}>
-            <Message readOnly={true} {...props.messages[0]} currentUser={props.currentUser} pluginOptions={props.pluginOptions} />
+            <Message 
+                {...threadMessage}
+                readOnly={!isOpen}  
+                currentUser={props.currentUser} 
+                pluginOptions={props.pluginOptions} 
+                onEdit={onThreadEdit} 
+                onDelete={onThreadDelete} 
+            />
             <div className={`${baseClass}__replies`}>
                 {!isOpen && 
                     <div className={`${baseClass}__replies-overview`}>
@@ -62,9 +79,20 @@ const Thread: React.FC<Props> = (props) => {
                 {isOpen && 
                     <div className={`${baseClass}__messages`}>
                         {replies.map((message) => (
-                            <Message key={message.id} {...message} currentUser={props.currentUser} pluginOptions={props.pluginOptions} onEdit={onMessageEdit} onDelete={onMessageDeleted} />
+                            <Message 
+                                {...message} 
+                                key={message.id}
+                                currentUser={props.currentUser}
+                                pluginOptions={props.pluginOptions}
+                                onEdit={onMessageEdit}
+                                onDelete={onMessageDeleted}
+                            />
                         ))}
-                        <MessageEditor onSuccess={onMessageAdded} thread={props.id} autofocus={replies.length <= 0} />
+                        <MessageEditor 
+                            onSuccess={onMessageAdd} 
+                            parent={props.id} 
+                            autofocus={replies.length <= 0} 
+                        />
                     </div>
                 }
                 {isOpen && 

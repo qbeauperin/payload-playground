@@ -1,5 +1,5 @@
 import { CollectionConfig } from 'payload/types';
-import { PluginOptions } from '../types';
+import { Message, PluginOptions } from '../types';
 
 const messages = ({ collections, users: { collection:usersCollection } }: PluginOptions): CollectionConfig => {
     const Messages: CollectionConfig = {
@@ -31,9 +31,9 @@ const messages = ({ collections, users: { collection:usersCollection } }: Plugin
                 },
             },
             {
-                name: 'thread',
+                name: 'parent',
                 type: 'relationship',
-                relationTo: 'threads',
+                relationTo: 'messages',
                 hasMany: false,
                 admin: {
                     allowCreate: false,
@@ -60,117 +60,72 @@ const messages = ({ collections, users: { collection:usersCollection } }: Plugin
                     allowCreate: false,
                 },
             },
-        ],
-        hooks: {
-            afterChange: [
-                async ({ doc: message, operation, req: { payload } }) => {
-                    if(operation === 'create') {
-                        // If message is threadless, create a new thread
-                        if (!message?.thread){
-                            const thread = await payload.create({
-                                collection: 'threads',
-                                data: {
-                                    doc: {
-                                        relationTo: message.doc.relationTo,
-                                        value: message.doc.value.id,
-                                    },
-                                    user: message.user.id,
-                                    messages: [ message.id ],
-                                }
-                            });
-                            if (thread?.id){
-                                const update = await payload.update({
-                                    collection: 'messages',
-                                    id: message.id,
-                                    data: {
-                                        thread: thread.id,
-                                    }   
-                                });
-                                if (!update) {
-                                    console.error('Message update in message afterChange failed');
-                                    // TODO handle error properly
-                                }
-                            }else{
-                                console.error('Thread create in message afterChange failed');
-                                // TODO handle error properly
-                            }
-                        }
-                        // If message has a thread, add it to the thread's messages
-                        else {
-                            const thread = await payload.findByID({
-                                collection: 'threads',
-                                id: message.thread.id,
-                                depth: 0,
-                            });
-                            if(!thread) {
-                                console.error('Thread findById in message afterChange failed');
-                                // TODO handle error properly
-                            }
-                            const update = await payload.update({
-                                collection: 'threads',
-                                id: message.thread.id,
-                                data: {
-                                    resolved: false,
-                                    messages: [ ...thread.messages, message.id ],
-                                }
-                            });
-                            if(!update){
-                                console.error('Thread update in message afterChange failed');
-                                // TODO handle error properly
-                            }
-                        }
-                    }
+            {
+                name: 'resolved',
+                type: 'checkbox',
+                defaultValue: false,
+            },
 
-                    return message;
-                }
-            ],
-            beforeDelete: [
-                async ({ id, req: { payload } }) => {
-                    const message = await payload.findByID({
+        ],
+        endpoints: [
+            {
+                path: '/threads/:docId',
+                method: 'get',
+                handler: async (req, res, next) => {
+                    const { payload, params } = req;
+
+                    // Get all parents
+                    const parents = await payload.find({
                         collection: 'messages',
-                        id: id,
-                        depth: 1,
+                        where: {
+                            and: [
+                                { 'doc.value': { equals: params.docId } },
+                                { resolved: { equals: false } },
+                                { parent: { exists: false } },
+                            ]
+                        },
+                        sort: "createdAt",
                     });
-                    console.log('// message data: ', message);
-                    
-                    if (!message) {
-                        console.error('Message findById in message beforeDelete failed');
-                        // TODO handle error properly
-                    }
-                    if(message?.thread){
-                        const messages = [...message.thread?.messages];
-                        if (messages?.length > 1){
-                            // If there's more than one message, remove this one
-                            const messageIndex = messages.indexOf(id);
-                            if(messageIndex >= 0){
-                                messages.splice(messageIndex, 1);
-                                const update = await payload.update({
-                                    collection: 'threads',
-                                    id: message.thread.id,
-                                    data: {
-                                        resolved: false,
-                                        messages: messages,
-                                    }
-                                });
-                                if (!update) {
-                                    console.error('Thread update in message beforeDelete failed');
-                                    // TODO handle error properly
-                                }
-                            }
-                        }else{
-                            // If this is the only message in the thread, delete the thread as well
-                            const deleteResult = payload.delete({
-                                collection: 'threads',
+                    if(parents?.docs){
+                        const parentsWithChildren: Message[] = await Promise.all(parents.docs.map( async (message) => {
+                            const messages = await payload.find({
+                                collection: 'messages',
                                 where: {
-                                    id: {
-                                        equals: message.thread.id,
+                                    parent: {
+                                        equals: message.id,
                                     }
                                 },
+                                sort: "createdAt",
                             });
-                            if(!deleteResult){
-                                console.error('Thread delete in message beforeDelete failed');
-                                // TODO handle error properly
-                            }
+                            const hasChildren = messages?.docs && messages.docs.length > 0;
+                            const children = hasChildren ? messages.docs : [];
+                            return {...message, children: children};
+                        }));
+
+                        res.status(200).send({ docs: parentsWithChildren });
+                    }else{
+                        res.status(500).send({ error: 'something went wrong' });
+                    }
+                }
+            }
+        ],
+        hooks: {
+            afterDelete: [
+                async ({ doc: message, req: { payload } }) => {
+                    // Check if the message was a thread
+                    if(!message.parent){
+                        // Delete all children messages
+                        const deleteResult = payload.delete({
+                            collection: 'messages',
+                            where: {
+                                parent: {
+                                    equals: message.id,
+                                }
+                            },
+                        });
+                        if (!deleteResult) {
+                            console.error('Thread delete in message beforeDelete failed');
+                            // TODO handle error properly
                         }
                     }
                 }

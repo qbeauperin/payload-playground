@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDocumentInfo } from "payload/components/utilities";
 import Thread from '../Thread';
 import MessageEditor from '../MessageEditor';
-import { PluginOptions } from '../../types';
-import qs from 'qs';
+import { PluginOptions, Message } from '../../types';
 import './styles.scss';
 
 interface Props {
@@ -18,24 +17,19 @@ const Threads: React.FC<Props> = (props) => {
     const { id: docId } = useDocumentInfo();
     
     const fetchThreads = () => {
-        const query = {
-            where: {
-                and: [
-                    { 'doc.value': { equals: docId } },
-                    { resolved: { equals: false } },
-                ]
-            },
-            sort: "createdAt",
-        };
-        fetch(`http://localhost:3000/api/threads/?${qs.stringify(query)}`) // TODO remove hardcoded url
+        fetch(`http://localhost:3000/api/messages/threads/${docId}`) // TODO remove hardcoded url
             .then((response) => response.json())
             .then((data) => {
                 setThreads(data?.docs ?? []);
             })
     }
 
-    const afterNewThread = () => {
-        fetchThreads();
+    const onThreadAdd = (message: Message) => {
+        setThreads([...threads, {...message, children: []}]);
+    }
+
+    const onThreadDelete = (deletedThreadId:string) => {
+        setThreads(threads.filter(thread => thread.id !== deletedThreadId));
     }
 
     useEffect(() => {
@@ -45,13 +39,18 @@ const Threads: React.FC<Props> = (props) => {
     return (
         <div className={ baseClass }>
             <ul className={`${baseClass}__list`}>
-                {threads.map((thread, index) => (
-                    <li key={index}>
-                        <Thread {...thread} {...props} onDelete={fetchThreads} single={threads.length <= 1} />
+                {threads.map((message:Message) => (
+                    <li key={message.id}>
+                        <Thread 
+                            {...message} 
+                            {...props} 
+                            onDelete={onThreadDelete} 
+                            single={threads.length <= 1} 
+                        />
                     </li>
                 ))}
                 <li>
-                    <MessageEditor onSuccess={afterNewThread} />
+                    <MessageEditor onSuccess={onThreadAdd} />
                 </li>
             </ul>
         </div>

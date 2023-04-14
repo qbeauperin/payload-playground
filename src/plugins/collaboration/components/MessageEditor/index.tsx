@@ -10,13 +10,13 @@ interface Props {
     respondTo?: string;
     onExit?: Function; 
     onSuccess?(message: Message): any;
-    thread?: string;
+    parent?: string;
     autofocus: boolean;
 }
 
 const baseClass = "messageEditor";
 
-const MessageEditor: React.FC<Props> = ({ id: messageId, content = '', respondTo, onExit, onSuccess, thread, autofocus = true }) => {
+const MessageEditor: React.FC<Props> = ({ id: messageId, content = '', respondTo, onExit, onSuccess, parent, autofocus = true }) => {
     const [ draft, setDraft ] = useState('');
     const [ isReadyToSubmit, setIsReadyToSubmit ] = useState(false);
     const [ isFocused, setIsFocused ] = useState(false);
@@ -26,7 +26,7 @@ const MessageEditor: React.FC<Props> = ({ id: messageId, content = '', respondTo
 
     useEffect(() => {
         // Autofocus textarea when needed
-        if (autofocus && (messageId || thread)){
+        if (autofocus && (messageId || parent)){
             textarea.current.focus();
         }
 
@@ -72,8 +72,8 @@ const MessageEditor: React.FC<Props> = ({ id: messageId, content = '', respondTo
                     relationTo: slug,
                     value: docId
                 },
-            }, thread ? {
-                thread: thread
+            }, parent ? {
+                parent: parent
             } : {}
         );
         const options = {
@@ -120,7 +120,7 @@ const MessageEditor: React.FC<Props> = ({ id: messageId, content = '', respondTo
                             value={draft}
                             onChange={handleTyping}
                             onFocus={onTextareaFocus}
-                            placeholder={thread ? "Reply..." : "New thread..."} // TODO handle i18n + handle create/edit posts
+                            placeholder={parent ? "Reply..." : "New thread..."} // TODO handle i18n + handle create/edit posts
                         />
                     </div>
                 </label>

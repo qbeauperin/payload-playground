@@ -7,16 +7,16 @@ import './styles.scss';
 import Gravatar from '../Gravatar';
 
 interface Props {
-    id?: string,
-    content: string,
-    createdAt: string,
-    user: Object|null,
-    respondTo?: string,
-    onEdit?(id: string, newContent: string): any,
-    onDelete?(deletedMessageId: string): any,
-    currentUser: Object|null,
-    pluginOptions: PluginOptions,
-    readOnly?: boolean
+    id?: string;
+    content: string;
+    createdAt: string;
+    user: Object|null;
+    respondTo?: string;
+    onEdit?(id: string, newContent: string): any;
+    onDelete?(deletedMessageId: string): any;
+    currentUser: Object|null;
+    pluginOptions: PluginOptions;
+    readOnly?: boolean;
 }
 
 const baseClass = "message";
@@ -43,7 +43,6 @@ const Message: React.FC<Props> = ({ id, content = '', createdAt = '', user, curr
             fetch(path, options)
                 .then((response) => response.json())
                 .then((data) => {
-                    console.log(data);
                     if (data?.errors){
                         console.error(data);
                         // TODO Handle error
@@ -70,7 +69,12 @@ const Message: React.FC<Props> = ({ id, content = '', createdAt = '', user, curr
                     </div>
                 }
                 {isEditing && 
-                    <MessageEditor id={id} content={content} onExit={() => setIsEditing(false)} onSuccess={afterEdit} />
+                    <MessageEditor 
+                        id={id} 
+                        content={content} 
+                        onExit={() => setIsEditing(false)} 
+                        onSuccess={afterEdit} 
+                    />
                 }
             </div>
             {currentUserIsAuthor && !isEditing && !readOnly &&
