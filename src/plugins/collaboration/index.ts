@@ -10,8 +10,17 @@ export const collaboration = (pluginOptions: PluginOptions) => (incomingConfig: 
     // Abort if no config has been declared yet
     if (!incomingConfig?.collections || incomingConfig?.collections.length <= 0) return incomingConfig;
 
-    // If no config is passed, return the config untouched
+    // Abort if no config is passed
     if (!pluginOptions?.collections || pluginOptions?.collections.length <= 0) return incomingConfig;
+
+    // Abort if no user collection has been defined
+    if (!incomingConfig?.admin?.user) return incomingConfig;
+
+    // Pass user collection in the config
+    pluginOptions.users = {
+        ...pluginOptions.users,
+        collection: incomingConfig.admin.user,
+    }
 
     const config: Config = {
         ...incomingConfig,

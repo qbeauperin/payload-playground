@@ -20,12 +20,20 @@ interface Props {
 }
 
 const baseClass = "message";
+const getDisplayName = (user, displayField) => {
+    if(displayField && user[displayField]){
+        return user[displayField];
+    }else{
+        const email = user.email;
+        return email.split('@')[0];
+    }
+}
 
 const Message: React.FC<Props> = ({ id, content = '', createdAt = '', user, currentUser, respondTo, onEdit, onDelete, pluginOptions, readOnly = false }) => {
     const [ isEditing, setIsEditing ] = useState(false);
     const currentUserIsAuthor = user?.id && currentUser?.id ? user.id == currentUser.id : false;
     const { shortDate, fullDate } = getFormatedDate(createdAt);
-    const userDisplayName = user[pluginOptions.users.displayField] ? user[pluginOptions.users.displayField] : user.email;
+    const userDisplayName = getDisplayName(user, pluginOptions.users.displayField);
 
     const afterEdit = (message: MessageType) => {
         onEdit(message.id, message.content);

@@ -62,9 +62,8 @@ export default buildConfig({
     collaboration({
       collections: [ 'posts', 'pages' ],
       users: {
-        collection: 'users',
         displayField: 'name',
-      },
+      }
     }),
   ]
 });

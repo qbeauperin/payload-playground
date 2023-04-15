@@ -1,6 +1,6 @@
 export interface PluginUserOptions {
-    collection: string;
-    displayField: string;
+    collection?: string;
+    displayField?: string;
 }
 export interface PluginOptions {
     collections: Array<string>;
