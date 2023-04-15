@@ -15,6 +15,10 @@
         display: flex;
         margin-bottom: 5px;
         align-items: baseline;
+
+        &--hasActions {
+            padding-right: 30px;
+        }
     }
 
     &__user, &__date {
@@ -36,12 +40,11 @@
         font-size: base(.44);
     }
 
-    &__content {
-        line-height: base(.72);
-    }
-
     &__actions {
         display: flex;
+        position: absolute;
+        top: 0;
+        right: 0;
         opacity: var(--actionsVisibility);
         padding: 0 0 0 base(.25);
         align-items: flex-start;
@@ -57,4 +60,9 @@
             }
         }
     }
+
+    &__content {
+        line-height: base(.72);
+    }
+
 }

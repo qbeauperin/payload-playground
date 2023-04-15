@@ -1,0 +1,60 @@
+@import 'payload/scss/index.scss';
+
+.moreMenu {
+    position: relative;
+
+    &__menu {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        right: calc(100% + base(.25));
+        top: 50%;
+        transform: translateY(-50%);
+        opacity: 0;
+        visibility: hidden;
+        background: var(--theme-elevation-100);
+        @include shadow-lg;
+        
+        &--open {
+            opacity: 1;
+            visibility: visible;
+        }
+    }
+}
+
+.moreMenuItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--theme-elevation-100);
+    color: var(--theme-elevation-800);
+    border: none;
+    padding: base(.3) base(.4) base(.3) base(.6);
+    cursor: pointer;
+
+    &:hover,
+    &:focus {
+        background-color: var(--theme-elevation-200);
+    }
+
+    &--dangerous {
+        color: var(--theme-error-500);
+        
+        &:hover,
+        &:focus {
+            background-color: var(--theme-error-300);
+            color: var(--theme-elevation-1000)
+        }
+    }
+
+    &__label {
+        display: block;
+        white-space: nowrap;
+        margin-right: base(.6);
+    }
+
+    &__icon {
+        width: 25px;
+        text-align: right;
+    }
+}

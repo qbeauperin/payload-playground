@@ -5,6 +5,7 @@ import MessageEditor from '../MessageEditor';
 import getFormatedDate from '../../../utilities/getFormatedDate';
 import './styles.scss';
 import Gravatar from '../Gravatar';
+import MoreMenu, { MoreMenuItem } from '../MoreMenu';
 
 interface Props {
     id?: string;
@@ -34,6 +35,7 @@ const Message: React.FC<Props> = ({ id, content = '', createdAt = '', user, curr
     const currentUserIsAuthor = user?.id && currentUser?.id ? user.id == currentUser.id : false;
     const { shortDate, fullDate } = getFormatedDate(createdAt);
     const userDisplayName = getDisplayName(user, pluginOptions.users.displayField);
+    const hasActions = currentUserIsAuthor && !isEditing && !readOnly
 
     const afterEdit = (message: MessageType) => {
         onEdit(message.id, message.content);
@@ -67,9 +69,17 @@ const Message: React.FC<Props> = ({ id, content = '', createdAt = '', user, curr
                 <Gravatar email={user.email} size={32} />
             </div>
             <div className={`${baseClass}__body`}>
-                <div className={`${baseClass}__header`}>
+                <div className={`${baseClass}__header` + (hasActions ? ` ${baseClass}__header--hasActions` : '')}>
                     <div className={`${baseClass}__user`}>{ userDisplayName }</div>
                     <div className={`${baseClass}__date`} title={ fullDate }>{ shortDate }</div>
+                    {hasActions &&
+                        <div className="message__actions">
+                            <MoreMenu>
+                                <MoreMenuItem label="Edit" icon="edit" onClick={() => setIsEditing(true)} />
+                                <MoreMenuItem label="Delete" icon="delete" isDangerous={true} onClick={handleDelete}/>
+                            </MoreMenu>
+                        </div>
+                    }
                 </div>
                 {!isEditing &&
                     <div className={`${baseClass}__content`}>
@@ -85,25 +95,6 @@ const Message: React.FC<Props> = ({ id, content = '', createdAt = '', user, curr
                     />
                 }
             </div>
-            {currentUserIsAuthor && !isEditing && !readOnly &&
-                <div className="message__actions">
-                    <Button
-                        buttonStyle="none"
-                        icon="edit"
-                        size="small"
-                        tooltip="Edit"
-                        onClick={() => setIsEditing(true)}
-                    />
-                    <Button
-                        buttonStyle="none"
-                        icon="x"
-                        size="small"
-                        tooltip="Delete"
-                        className="delete"
-                        onClick={handleDelete}
-                    />
-                </div>
-            }
         </div>
     )
 }
