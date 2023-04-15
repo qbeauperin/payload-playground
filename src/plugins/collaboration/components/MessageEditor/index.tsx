@@ -14,9 +14,9 @@ interface Props {
     autofocus: boolean;
 }
 
-const baseClass = "messageEditor";
 
 const MessageEditor: React.FC<Props> = ({ id: messageId, content = '', respondTo, onExit, onSuccess, parent, autofocus = true }) => {
+    const baseClass = "messageEditor";
     const [ draft, setDraft ] = useState('');
     const [ isReadyToSubmit, setIsReadyToSubmit ] = useState(false);
     const [ isFocused, setIsFocused ] = useState(false);

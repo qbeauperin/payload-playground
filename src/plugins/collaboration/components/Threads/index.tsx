@@ -10,9 +10,8 @@ interface Props {
     pluginOptions: PluginOptions,
 }
 
-const baseClass = "threads";
-
 const Threads: React.FC<Props> = (props) => {
+    const baseClass = "threads";
     const [ threads, setThreads ] = useState([])
     const { id: docId } = useDocumentInfo();
     

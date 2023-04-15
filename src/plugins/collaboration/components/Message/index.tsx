@@ -19,7 +19,6 @@ interface Props {
     readOnly?: boolean;
 }
 
-const baseClass = "message";
 const getDisplayName = (user, displayField) => {
     if(displayField && user[displayField]){
         return user[displayField];
@@ -30,6 +29,7 @@ const getDisplayName = (user, displayField) => {
 }
 
 const Message: React.FC<Props> = ({ id, content = '', createdAt = '', user, currentUser, respondTo, onEdit, onDelete, pluginOptions, readOnly = false }) => {
+    const baseClass = "message";
     const [ isEditing, setIsEditing ] = useState(false);
     const currentUserIsAuthor = user?.id && currentUser?.id ? user.id == currentUser.id : false;
     const { shortDate, fullDate } = getFormatedDate(createdAt);

@@ -13,9 +13,8 @@ interface Props extends MessageType {
     onDelete(id:string): any;
 }
 
-const baseClass = "thread";
-
 const Thread: React.FC<Props> = (props) => {
+    const baseClass = "thread";
     const [ threadMessage, setThreadMessage ] = useState(props);
     const [ replies, setReplies ] = useState(props.children);
     const shouldBeOpen = (props?.single ?? false) && props.children.length > 0;
