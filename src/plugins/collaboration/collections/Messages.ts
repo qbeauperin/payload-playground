@@ -9,10 +9,7 @@ const messages = ({ collections, users: { collection:usersCollection } }: Plugin
             defaultColumns: ['content', 'thread', 'repondingTo', 'user', 'createdAt'],
             useAsTitle: 'content',
             disableDuplicate: true,
-        },
-        access: {
-            // read: loggedIn
-            // TODO handle access
+            // hidden: true, // to be uncommented once #2487 is merged in
         },
         fields: [
             {
@@ -72,7 +69,16 @@ const messages = ({ collections, users: { collection:usersCollection } }: Plugin
                 path: '/threads/:docId',
                 method: 'get',
                 handler: async (req, res, next) => {
-                    const { payload, params } = req;
+                    const { payload, params, user } = req;
+
+                    if(!user){
+                        res.status(403).send({
+                            errors: [
+                                { message: "You are not allowed to perform this action." }
+                            ] 
+                        });
+                        return false;
+                    }
 
                     // Get all parents
                     const parents = await payload.find({
@@ -85,6 +91,7 @@ const messages = ({ collections, users: { collection:usersCollection } }: Plugin
                             ]
                         },
                         sort: "createdAt",
+                        depth: 1,
                     });
                     if(parents?.docs){
                         const parentsWithChildren: Message[] = await Promise.all(parents.docs.map( async (message) => {
@@ -96,10 +103,14 @@ const messages = ({ collections, users: { collection:usersCollection } }: Plugin
                                     }
                                 },
                                 sort: "createdAt",
+                                depth: 1,
                             });
                             const hasChildren = messages?.docs && messages.docs.length > 0;
                             const children = hasChildren ? messages.docs : [];
-                            return {...message, children: children};
+                            const cleanChildren = children.map((message) => {
+                                return { ...message, doc: message.doc.id };
+                            });
+                            return { ...message, doc: message.doc.id, children: cleanChildren };
                         }));
 
                         res.status(200).send({ docs: parentsWithChildren });
