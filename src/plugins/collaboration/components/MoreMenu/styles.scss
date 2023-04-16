@@ -12,12 +12,14 @@
         transform: translateY(-50%);
         opacity: 0;
         visibility: hidden;
+        pointer-events: none;
         background: var(--theme-elevation-100);
         @include shadow-lg;
         
         &--open {
             opacity: 1;
             visibility: visible;
+            pointer-events: all;
         }
     }
 }

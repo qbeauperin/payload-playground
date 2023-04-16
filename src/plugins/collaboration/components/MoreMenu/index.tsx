@@ -23,7 +23,10 @@ export const MoreMenuItem: React.FC<MoreMenuItemProps> = ({ label, icon, onClick
             break;
     }
     return (
-        <button className={baseClass + (isDangerous ? ` ${baseClass}--dangerous` : '')} onClick={onClick}>
+        <button className={baseClass + (isDangerous ? ` ${baseClass}--dangerous` : '')} onClick={(e) => {
+            e.preventDefault();
+            onClick(); 
+        }}>
             <span className={`${baseClass}__label`}>{label}</span>
             {iconComponent &&
                 <span className={`${baseClass}__icon`}>

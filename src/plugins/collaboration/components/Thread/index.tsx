@@ -58,6 +58,7 @@ const Thread: React.FC<Props> = (props) => {
                 pluginOptions={props.pluginOptions} 
                 onEdit={onThreadEdit} 
                 onDelete={onThreadDelete} 
+                isParent={true}
             />
             <div className={`${baseClass}__replies`}>
                 {!isOpen && 

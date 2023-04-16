@@ -64,5 +64,9 @@
     &__content {
         line-height: base(.72);
     }
+}
 
+.deleteMessage .message {
+    border: 1px solid var(--theme-elevation-100);
+    padding: base(1);
 }

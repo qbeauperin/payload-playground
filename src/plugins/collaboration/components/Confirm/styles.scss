@@ -1,0 +1,35 @@
+.confirmModal {
+    &__modal {
+        display: flex;
+        align-items: center;
+        height: 100%;
+    
+        &:before,
+        &:after {
+            content: " ";
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+        }
+    
+        &:before {
+            background: var(--theme-bg);
+            opacity: 0.85;
+        }
+    
+        &:after {
+            backdrop-filter: blur(5px);
+        }
+    }
+    
+    &__template {
+        position: relative;
+        z-index: 1;
+    
+        .btn {
+            margin-right: 1.9230769231rem;
+        }
+    }
+}
