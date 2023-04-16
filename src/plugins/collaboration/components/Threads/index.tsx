@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useDocumentInfo } from "payload/components/utilities";
 import Thread from '../Thread';
 import MessageEditor from '../MessageEditor';
@@ -23,13 +23,13 @@ const Threads: React.FC<Props> = (props) => {
             })
     }
 
-    const onThreadAdd = (message: Message) => {
+    const onThreadAdd = useCallback((message: Message) => {
         setThreads([...threads, {...message, children: []}]);
-    }
+    }, [threads]);
 
-    const onThreadDelete = (deletedThreadId:string) => {
+    const onThreadDelete = useCallback((deletedThreadId:string) => {
         setThreads(threads.filter(thread => thread.id !== deletedThreadId));
-    }
+    }, [threads]);
 
     useEffect(() => {
         fetchThreads();

@@ -1,3 +1,5 @@
+import { User } from "payload/dist/auth";
+
 export interface PluginUserOptions {
     collection?: string;
     displayField?: string;
@@ -15,5 +17,5 @@ export interface Message {
     doc: Object|string;
     createdAt: string;
     updatedAt: string;
-    user: object|string;
+    user: User|string;
 }

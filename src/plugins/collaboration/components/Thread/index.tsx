@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { Button } from 'payload/components/elements';
 import Message from '../Message';
 import Gravatar from '../Gravatar';
@@ -20,31 +20,38 @@ const Thread: React.FC<Props> = (props) => {
     const shouldBeOpen = (props?.single ?? false) && props.children.length > 0;
     const [ isOpen, setIsOpen ] = useState(shouldBeOpen);
     
-    const uniqueUserEmails = replies.reduce((acc: Array<MessageType>, message: MessageType) => {
-        const email = message.user.email; // TODO use the User type dynamically based on the plugin config
-        return !acc.includes(email) ? [...acc, email] : acc;
-    }, []);
+    const uniqueUserEmails = useMemo(
+        () => replies.reduce((acc: string[], message: MessageType) => {
+            if (typeof message.user != 'string'){
+                const email = message.user.email; // TODO use the User type dynamically based on the plugin config
+                return !acc.includes(email) ? [...acc, email] : acc;
+            }
+        }, []),
+        [replies]
+    );
 
-    const onThreadEdit = (id: string, newContent: string) => {
+    const onThreadEdit = useCallback((id: string, newContent: string) => {
         setThreadMessage({...props, content: newContent});
-    }
+    }, [props]);
 
-    const onThreadDelete = () => {
+    const onThreadDelete = useCallback(() => {
         props.onDelete(props.id);
-    }
+    }, [props]);
 
-    const onMessageAdd = (newMessage:Message) => {
+    const onMessageAdd = useCallback((newMessage:Message) => {
         setReplies([...replies, newMessage]);
-    }
-    const onMessageEdit = (id:string, newContent:string) => {
+    }, [replies]);
+
+    const onMessageEdit = useCallback((id:string, newContent:string) => {
         const updatedReplies = replies.map((message: MessageType) => {
             return message.id === id ? {...message, content: newContent} : message;
         })
         setReplies(updatedReplies);
-    }
-    const onMessageDeleted = (deletedMessageId:string) => {
+    }, [replies]);
+
+    const onMessageDelete = useCallback((deletedMessageId:string) => {
         setReplies(replies.filter(message => message.id !== deletedMessageId));
-    }
+    }, [replies]);
 
     const noMessages = "Reply";
     const messages = `${replies.length} ${replies.length <= 1 ? 'message' : 'messages'}`;
@@ -85,7 +92,7 @@ const Thread: React.FC<Props> = (props) => {
                                 currentUser={props.currentUser}
                                 pluginOptions={props.pluginOptions}
                                 onEdit={onMessageEdit}
-                                onDelete={onMessageDeleted}
+                                onDelete={onMessageDelete}
                             />
                         ))}
                         <MessageEditor 

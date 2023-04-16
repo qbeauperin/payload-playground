@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ChangeEvent, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback, ChangeEvent } from 'react';
 import { useDocumentInfo } from "payload/components/utilities";
 import { Button } from 'payload/components/elements';
 import { Message } from '../../types';
@@ -13,7 +13,6 @@ interface Props {
     parent?: string;
     autofocus: boolean;
 }
-
 
 const MessageEditor: React.FC<Props> = ({ id: messageId, content = '', respondTo, onExit, onSuccess, parent, autofocus = true }) => {
     const baseClass = "messageEditor";
@@ -58,11 +57,9 @@ const MessageEditor: React.FC<Props> = ({ id: messageId, content = '', respondTo
         setDraft(e?.target?.value);
     }
 
-    const handleSubmit = () => {
+    const handleSubmit = useCallback(() => {
         // Check that content isn't empty
-        if (!draft.trim()){
-            return false;
-        }
+        if (!draft.trim()) return false;
 
         // Create or update message
         const path = `http://localhost:3000/api/messages/${messageId ?? ''}`;
@@ -91,19 +88,19 @@ const MessageEditor: React.FC<Props> = ({ id: messageId, content = '', respondTo
                 if (data?.doc) {
                     setDraft('');
                     onSuccess(data.doc);
-                    handleCancel();
+                    handleExit();
                 } else {
                     console.error(data);
                     // TODO Handle error
                 }
             })
-    }
+    }, [draft, messageId, slug, docId, parent]);
 
-    const handleCancel = () => {
+    const handleExit = useCallback(() => {
         setIsFocused(false);
         setDraft('');
         if (onExit) onExit();
-    }
+    }, [onExit]);
 
     return (
         <div className={baseClass + (isFocused ? ` ${baseClass}--focused` : '')} ref={component}>
@@ -131,7 +128,7 @@ const MessageEditor: React.FC<Props> = ({ id: messageId, content = '', respondTo
                     <Button
                         buttonStyle="secondary"
                         size="small"
-                        onClick={handleCancel}
+                        onClick={handleExit}
                     >
                         Cancel
                         {/* TODO handle i18n */}

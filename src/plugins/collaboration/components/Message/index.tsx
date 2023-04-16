@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { Message as MessageType, PluginOptions } from '../../types';
 import { User } from "payload/dist/auth/types";
 import getFormatedDate from '../../../utilities/getFormatedDate';
@@ -32,16 +32,22 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
     const { id, content = '', createdAt = '', user, currentUser, respondTo, onEdit, onDelete, pluginOptions, isParent = false, readOnly = false } = props;
     const [ isEditing, setIsEditing ] = useState(false);
     const currentUserIsAuthor = user?.id && currentUser?.id ? user.id == currentUser.id : false;
-    const { shortDate, fullDate } = getFormatedDate(createdAt);
-    const userDisplayName = getDisplayName(user, pluginOptions.users.displayField);
+    const { shortDate, fullDate } = useMemo(
+        () => getFormatedDate(createdAt),
+        [createdAt]
+    );
+    const userDisplayName = useMemo(
+        () => getDisplayName(user, pluginOptions.users.displayField),
+        [user, pluginOptions]
+    );
     const hasActions = currentUserIsAuthor && !isEditing && !readOnly;
 
-    const afterEdit = (message: MessageType) => {
+    const afterEdit = useCallback((message: MessageType) => {
         onEdit(message.id, message.content);
         setIsEditing(false);
-    }
+    }, []);
 
-    const handleDelete = () => {
+    const handleDelete = useCallback(() => {
         fetch(`http://localhost:3000/api/messages/${id}`, { method: 'DELETE' })
             .then((response) => response.json())
             .then((data) => {
@@ -52,9 +58,9 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
                     onDelete(id);
                 }
             });
-    }
+    }, [id]);
 
-    const handleResolve = () => {
+    const handleResolve = useCallback(() => {
         fetch(`http://localhost:3000/api/messages/${id}`, {
             method: 'PATCH', 
             headers: { 'Content-Type': 'application/json' },
@@ -71,9 +77,9 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
                     onDelete(id);
                 }
             });
-    }
+    }, [id]);
 
-    const handleActions = (action: string) => {
+    const handleActions = useCallback((action: string) => {
         switch (action) {
             case 'edit':
                 setIsEditing(true);
@@ -85,7 +91,7 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
                 handleResolve();
                 break;
         }
-    }
+    }, []);
 
     return (
         <div className={baseClass + (currentUserIsAuthor ? ` ${baseClass}--isAuthor` : '' )}>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import md5 from 'md5';
 import qs from 'qs';
 
@@ -8,12 +8,12 @@ interface Props {
 }
 
 const Gravatar: React.FC<Props> = ({ email, size = 25 }) => {
-    const hash = md5(email.trim().toLowerCase());
-    const query = qs.stringify({
+    const hash = useMemo(() => md5(email.trim().toLowerCase()), [email]);
+    const query = useMemo(() => qs.stringify({
         s: size*2,
         r: 'g',
         default: 'mp',
-    });
+    }), [size]);
     return (
         <img
             className="gravatar-account"
