@@ -21,6 +21,7 @@ const MessageEditor: React.FC<Props> = ({ id: messageId, content = '', respondTo
     const [ isReadyToSubmit, setIsReadyToSubmit ] = useState(false);
     const [ isFocused, setIsFocused ] = useState(false);
     const { id: docId, slug } = useDocumentInfo();
+    const textareaId = "message-editor-textarea" + (messageId ? `-${messageId}` : '') + (parent ? `-${parent}` : '');
     const component = useRef(null);
     const textarea = useRef(null);
 
@@ -107,7 +108,7 @@ const MessageEditor: React.FC<Props> = ({ id: messageId, content = '', respondTo
     return (
         <div className={baseClass + (isFocused ? ` ${baseClass}--focused` : '')} ref={component}>
             <div className="field-type textarea">
-                <label className="textarea-outer" htmlFor="field-new-message">
+                <label className="textarea-outer" htmlFor={textareaId}>
                     <div className="textarea-inner">
                         <div
                             className="textarea-clone"
@@ -116,7 +117,7 @@ const MessageEditor: React.FC<Props> = ({ id: messageId, content = '', respondTo
                         <textarea
                             ref={textarea}
                             className="textarea-element"
-                            id="field-new-message"
+                            id={textareaId}
                             value={draft}
                             onChange={handleTyping}
                             onFocus={onTextareaFocus}
