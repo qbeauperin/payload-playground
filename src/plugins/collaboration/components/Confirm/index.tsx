@@ -35,8 +35,12 @@ const Confirm: React.FC<Props> = ({ slug, title, confirmLabel = "Confirm", onCon
                     Cancel {/* // TODO handle i18n */}
                 </Button>
                 <Button
-                    onClick={onConfirm}
-                >
+                    onClick={(e) => {
+                        e.preventDefault();
+                        toggleModal(slug);
+                        onConfirm();
+                    }}
+                        >
                     {confirmLabel}
                 </Button>
             </MinimalTemplate>
