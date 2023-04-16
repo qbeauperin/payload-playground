@@ -8,7 +8,11 @@ import Gravatar from '../Gravatar';
 import MoreMenu, { MoreMenuItem } from '../MoreMenu';
 import { useModal } from '@faceless-ui/modal';
 import Confirm from '../Confirm';
+import { Button } from 'payload/components/elements';
+import Check from 'payload/dist/admin/components/icons/Check';
 import './styles.scss';
+
+const baseClass = "message";
 
 interface MessageProps {
     id?: string;
@@ -25,8 +29,7 @@ interface MessageProps {
 }
 
 const Message: React.FC<MessageProps> = (props: MessageProps) => {
-    const { id, content = '', createdAt = '', user, currentUser, respondTo, onEdit, onDelete, pluginOptions, readOnly = false } = props;
-    const baseClass = "message";
+    const { id, content = '', createdAt = '', user, currentUser, respondTo, onEdit, onDelete, pluginOptions, isParent = false, readOnly = false } = props;
     const [ isEditing, setIsEditing ] = useState(false);
     const currentUserIsAuthor = user?.id && currentUser?.id ? user.id == currentUser.id : false;
     const { shortDate, fullDate } = getFormatedDate(createdAt);
@@ -39,8 +42,26 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
     }
 
     const handleDelete = () => {
-        if (!id) return false;
         fetch(`http://localhost:3000/api/messages/${id}`, { method: 'DELETE' })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data?.errors){
+                    console.error(data);
+                    // TODO Handle error
+                }else{
+                    onDelete(id);
+                }
+            });
+    }
+
+    const handleResolve = () => {
+        fetch(`http://localhost:3000/api/messages/${id}`, {
+            method: 'PATCH', 
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                resolved: true
+            })
+        })
             .then((response) => response.json())
             .then((data) => {
                 if (data?.errors){
@@ -60,6 +81,9 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
             case 'delete':
                 handleDelete();
                 break;
+            case 'resolve':
+                handleResolve();
+                break;
         }
     }
 
@@ -73,7 +97,7 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
                     <div className={`${baseClass}__user`}>{ userDisplayName }</div>
                     <div className={`${baseClass}__date`} title={ fullDate }>{ shortDate }</div>
                     {hasActions &&
-                        <MessageActions {...props} onAction={handleActions}/>
+                        <MessageActions {...props} showResolve={isParent && currentUserIsAuthor} onAction={handleActions}/>
                     }
                 </div>
                 {!isEditing &&
@@ -95,6 +119,7 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
 }
 
 interface MessageActionsProp extends MessageProps {
+    showResolve: boolean;
     onAction: Function;
 }
 const MessageActions: React.FC<MessageActionsProp> = (props) => {
@@ -104,17 +129,27 @@ const MessageActions: React.FC<MessageActionsProp> = (props) => {
 
     return (
         <div className="message__actions">
+            {props.showResolve &&
+                <Button
+                    className={`${baseClass}__resolve`}
+                    buttonStyle="none"
+                    icon={<Check />}
+                    size="small"
+                    tooltip="Mark as resolved"
+                    onClick={() => onAction('resolve')}
+                />
+            }
             <MoreMenu>
                 <MoreMenuItem label="Edit" icon="edit" onClick={() => onAction('edit')} />
                 <MoreMenuItem label="Delete" icon="delete" isDangerous={true} onClick={() => toggleModal(confirmDeleteModalSlug)} />
                 <Confirm
                     slug={confirmDeleteModalSlug}
-                    title={props.isParent ? "Delete thread" : "Delete message"}
-                    confirmLabel="Delete"
-                    onConfirm={() => onAction('delete')}
+                    title={props.isParent ? "Delete thread" : "Delete message"} // TODO handle i18m
+                    confirmLabel="Delete" // TODO handle i18m
+                    onConfirm={() => onAction('delete')} 
                 >
                     <div className="deleteMessage">
-                        <p>Are you sure you want to delete this {props.isParent ? "message and all the messages in the thread" : "message"}? This cannot be undone.</p>
+                        <p>Are you sure you want to delete this {props.isParent ? "message and all the messages in the thread" : "message"}? This cannot be undone.</p> {/* TODO handle i18m */}
                         <Message {...props} readOnly={true} />
                     </div>
                 </Confirm>
