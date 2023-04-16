@@ -4,6 +4,7 @@ import { Button } from 'payload/components/elements';
 import MessageEditor from '../MessageEditor';
 import getFormatedDate from '../../../utilities/getFormatedDate';
 import './styles.scss';
+import getDisplayName from '../../../utilities/getDisplayName';
 import Gravatar from '../Gravatar';
 import MoreMenu, { MoreMenuItem } from '../MoreMenu';
 
@@ -18,15 +19,6 @@ interface Props {
     currentUser: Object|null;
     pluginOptions: PluginOptions;
     readOnly?: boolean;
-}
-
-const getDisplayName = (user, displayField) => {
-    if(displayField && user[displayField]){
-        return user[displayField];
-    }else{
-        const email = user.email;
-        return email.split('@')[0];
-    }
 }
 
 const Message: React.FC<Props> = ({ id, content = '', createdAt = '', user, currentUser, respondTo, onEdit, onDelete, pluginOptions, readOnly = false }) => {
