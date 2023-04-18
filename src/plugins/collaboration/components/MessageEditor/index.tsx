@@ -30,10 +30,15 @@ const MessageEditor: React.FC<Props> = ({ id: messageId, content = '', respondTo
             textarea.current.focus();
         }
 
-        // Listen to clicks on the whole document
+        // Listen for clicks on the whole document
         document.addEventListener('click', handleClicks, true);
+        // Listen for key presses on the whole document
+        document.body.addEventListener('keyup', handleKeypresses, true);
+
         return () => {
+            // Clean up listeners when unmounting
             document.removeEventListener('click', handleClicks, true);
+            document.body.removeEventListener('keyup', handleKeypresses, true);
         };
     }, []);
 
@@ -41,6 +46,14 @@ const MessageEditor: React.FC<Props> = ({ id: messageId, content = '', respondTo
         // If click is outside of the component
         if (component.current && !component.current.contains(event.target)) {
             setIsFocused(false);
+        }
+    }
+
+    const handleKeypresses = (event) => {
+        if (event.key == "Escape") {
+            setIsFocused(false);
+            textarea.current.blur();
+            handleExit();
         }
     }
 
