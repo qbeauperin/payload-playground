@@ -62,7 +62,6 @@ const messages = ({ collections, users: { collection:usersCollection } }: Plugin
                 type: 'checkbox',
                 defaultValue: false,
             },
-
         ],
         endpoints: [
             {
@@ -121,6 +120,17 @@ const messages = ({ collections, users: { collection:usersCollection } }: Plugin
             }
         ],
         hooks: {
+            afterChange: [
+                async ({ doc }) => {
+                    // Notify websocket
+                    try{
+                        fetch(`http://localhost:3000/updateMessages/${doc.doc.value.id}`, { method: 'POST' });
+                    }catch(e){
+                        console.error(e);
+                    }
+                    return doc;
+                }
+            ],
             afterDelete: [
                 async ({ doc: message, req: { payload } }) => {
                     // Check if the message was a thread
@@ -138,6 +148,12 @@ const messages = ({ collections, users: { collection:usersCollection } }: Plugin
                             console.error('Thread delete in message beforeDelete failed');
                             // TODO handle error properly
                         }
+                    }
+                    // Notify websocket
+                    try{
+                        fetch(`http://localhost:3000/updateMessages/${message.doc.value.id}`, { method: 'POST' });
+                    }catch(e){
+                        console.error(e);
                     }
                 }
             ]

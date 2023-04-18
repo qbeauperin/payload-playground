@@ -4,6 +4,7 @@ import Thread from '../Thread';
 import MessageEditor from '../MessageEditor';
 import { PluginOptions, Message } from '../../types';
 import './styles.scss';
+import { io } from 'socket.io-client';
 
 interface Props {
     currentUser: Object|null,
@@ -16,11 +17,23 @@ const Threads: React.FC<Props> = (props) => {
     const { id: docId } = useDocumentInfo();
     
     const fetchThreads = () => {
-        fetch(`http://localhost:3000/api/messages/threads/${docId}`) // TODO remove hardcoded url
-            .then((response) => response.json())
-            .then((data) => {
-                setThreads(data?.docs ?? []);
-            })
+        try{
+            fetch(`http://localhost:3000/api/messages/threads/${docId}`, { cache: "no-cache" }) // TODO remove hardcoded url
+                .then((response) => response.json())
+                .then((data) => {
+                    setThreads(data?.docs ?? []);
+                })
+        }catch(e){
+            console.error('Something went wrong while fetching threads: ', e);
+        }
+    }
+
+    const listenForUpdates = () => {
+        const socket = io('http://localhost:3000');
+        console.log('Listening on: ', docId as string);
+        socket.on(docId as string, (arg) => {
+            fetchThreads();
+        });
     }
 
     const onThreadAdd = useCallback((message: Message) => {
@@ -33,6 +46,7 @@ const Threads: React.FC<Props> = (props) => {
 
     useEffect(() => {
         fetchThreads();
+        listenForUpdates();
     }, [])
 
     return (

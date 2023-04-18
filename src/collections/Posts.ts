@@ -23,7 +23,7 @@ const Posts: CollectionConfig = {
   slug: 'posts',
   admin: {
     group: 'News',
-    defaultColumns: ['featuredImage', 'title', 'tags', 'publishedDate', 'status'],
+    defaultColumns: ['title', 'tags', 'publishedDate', 'status'],
     useAsTitle: 'title',
   },
   access: {

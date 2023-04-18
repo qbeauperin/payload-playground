@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Button } from 'payload/components/elements';
 import Message from '../Message';
 import Gravatar from '../Gravatar';
@@ -21,45 +21,45 @@ const Thread: React.FC<Props> = (props) => {
     const [ isOpen, setIsOpen ] = useState(shouldBeOpen);
     
     const uniqueUserEmails = useMemo(
-        () => replies.reduce((acc: string[], message: MessageType) => {
+        () => props.children.reduce((acc: string[], message: MessageType) => {
             if (typeof message.user != 'string'){
                 const email = message.user.email; // TODO use the User type dynamically based on the plugin config
                 return !acc.includes(email) ? [...acc, email] : acc;
             }
         }, []),
-        [replies]
+        [props.children]
     );
 
     const onThreadEdit = useCallback((id: string, newContent: string) => {
-        setThreadMessage({...props, content: newContent});
+        // setThreadMessage({...props, content: newContent});
     }, [props]);
 
     const onThreadDelete = useCallback(() => {
-        props.onDelete(props.id);
+        // props.onDelete(props.id);
     }, [props]);
 
     const onMessageAdd = useCallback((newMessage:Message) => {
-        setReplies([...replies, newMessage]);
-    }, [replies]);
+        // setReplies([...replies, newMessage]);
+    }, [props.children]);
 
     const onMessageEdit = useCallback((id:string, newContent:string) => {
         const updatedReplies = replies.map((message: MessageType) => {
             return message.id === id ? {...message, content: newContent} : message;
         })
-        setReplies(updatedReplies);
-    }, [replies]);
+        // setReplies(updatedReplies);
+    }, [props.children]);
 
     const onMessageDelete = useCallback((deletedMessageId:string) => {
-        setReplies(replies.filter(message => message.id !== deletedMessageId));
-    }, [replies]);
+        // setReplies(replies.filter(message => message.id !== deletedMessageId));
+    }, [props.children]);
 
     const noMessages = "Reply";
-    const messages = `${replies.length} ${replies.length <= 1 ? 'message' : 'messages'}`;
+    const messages = `${props.children.length} ${props.children.length <= 1 ? 'message' : 'messages'}`;
 
     return (
         <div className={baseClass + (isOpen ? ` ${baseClass}--open` : '')} onClick={() => !isOpen ? setIsOpen(true) : false}>
             <Message 
-                {...threadMessage}
+                {...props}
                 readOnly={!isOpen}  
                 currentUser={props.currentUser} 
                 pluginOptions={props.pluginOptions} 
@@ -76,7 +76,7 @@ const Thread: React.FC<Props> = (props) => {
                             ))}
                         </div>
                         <div className="count">
-                            {replies.length > 0 ? messages : noMessages}
+                            {props.children.length > 0 ? messages : noMessages}
                         </div>
                         <svg className="icon icon--chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25 25">
                             <path className="stroke" d="M9 10.5L12.5 14.5L16 10.5"></path>
@@ -85,7 +85,7 @@ const Thread: React.FC<Props> = (props) => {
                 }
                 {isOpen && 
                     <div className={`${baseClass}__messages`}>
-                        {replies.map((message) => (
+                        {props.children.map((message) => (
                             <Message 
                                 {...message} 
                                 key={message.id}
@@ -98,7 +98,7 @@ const Thread: React.FC<Props> = (props) => {
                         <MessageEditor 
                             onSuccess={onMessageAdd} 
                             parent={props.id} 
-                            autofocus={replies.length <= 0} 
+                            autofocus={props.children.length <= 0} 
                         />
                     </div>
                 }
