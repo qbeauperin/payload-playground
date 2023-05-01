@@ -8,7 +8,7 @@ import Pages from './collections/Pages';
 import Users from './collections/Users';
 import Media from './collections/Media';
 import MainMenu from './globals/MainMenu';
-import { translator } from './plugins/translator';
+import { t10nProgress } from './plugins/t10nProgress';
 
 const adapter = gcsAdapter({
   options: {
@@ -61,7 +61,7 @@ export default buildConfig({
         },
       },
     }),
-    translator({
+    t10nProgress({
       collections: [
         'posts', 'pages',
       ],
