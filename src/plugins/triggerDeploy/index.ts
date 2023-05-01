@@ -23,9 +23,12 @@ export const triggerDeploy = (pluginOptions: PluginOptions) => (incomingConfig: 
                 // If collection is not part of the ones passed in the options, ignore it
                 if (!pluginOptions?.collections.includes(collection.slug)) return collection;
 
+                // Check if drafts are enabled
+                const draftsEnabled = typeof collection?.versions === 'object' && collection?.versions?.drafts;
+
                 // Define hooks
                 const onAfterChange = async ({ doc, previousDoc }) => {
-                    if (doc._status === 'published' || previousDoc?._status === 'published'){
+                    if (!draftsEnabled || doc._status === 'published' || previousDoc?._status === 'published'){
                         trigger();
                     }
                 }
