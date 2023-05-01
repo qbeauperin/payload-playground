@@ -8,6 +8,7 @@ import Pages from './collections/Pages';
 import Users from './collections/Users';
 import Media from './collections/Media';
 import MainMenu from './globals/MainMenu';
+import { triggerDeploy } from './plugins/triggerDeploy';
 
 const adapter = gcsAdapter({
   options: {
@@ -56,6 +57,10 @@ export default buildConfig({
           prefix: 'media',
         },
       },
+    }),
+    triggerDeploy({
+      collections: [ 'posts', 'pages' ],
+      webhook: process.env.DEPLOY_WEBHOOK,
     }),
   ]
 });
