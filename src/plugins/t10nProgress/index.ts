@@ -8,6 +8,7 @@ import { LocalizationConfig } from 'payload/dist/config/types';
 import { Field } from 'payload/dist/fields/config/types';
 import buildStateFromSchema from 'payload/dist/admin/components/forms/Form/buildStateFromSchema';
 import { CollectionBeforeChangeHook } from 'payload/types';
+import i18nSerializeData from "./utilities/i18nSerialize";
 
 export const t10nProgress = (pluginOptions: PluginOptions) => (incomingConfig: Config): Config => {
 
@@ -26,15 +27,30 @@ export const t10nProgress = (pluginOptions: PluginOptions) => (incomingConfig: C
             // const updateTranslationProgress: CollectionBeforeChangeHook = async ({ data, req }) => {
                 // const { localization, collections } = incomingConfig;
                 // const { locales, defaultLocale } = localization as LocalizationConfig;
-                
-                console.log(data);
 
-                const fullDoc = await payload.findByID({
-                    collection: collectionConfig.slug,
-                    id: id,
-                    locale: "de",
-                    draft: true,
-                });
+                console.log('  ');
+                console.log('  ');
+                // console.log('  ');
+                // console.log('// collectionConfig.fields:');
+                // console.log(collectionConfig.fields);
+                
+                console.log('  ');
+                console.log('// data:');
+                console.log(data);
+                
+                const i18nSerializedData = i18nSerializeData(data, collectionConfig.fields);
+                
+                console.log('  ');
+                console.log('// i18nSerializedData:');
+                console.log(i18nSerializedData);
+                
+
+                // const fullDoc = await payload.findByID({
+                //     collection: collectionConfig.slug,
+                //     id: id,
+                //     locale: "de",
+                //     draft: true,
+                // });
 
                 // const serializedDoc = serializeDocument(
                 //     payload,
@@ -42,7 +58,7 @@ export const t10nProgress = (pluginOptions: PluginOptions) => (incomingConfig: C
                 //     collectionConfig, 
                 // );
                 
-                console.log('// fullDoc: ', fullDoc);
+                // console.log('// fullDoc: ', fullDoc);
                 
 
                 // console.log('// fieldsConfig: ', fieldsConfig);

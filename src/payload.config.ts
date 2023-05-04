@@ -7,6 +7,7 @@ import Tags from './collections/Tags';
 import Pages from './collections/Pages';
 import Users from './collections/Users';
 import Media from './collections/Media';
+import Tests from './collections/Tests';
 import MainMenu from './globals/MainMenu';
 import { t10nProgress } from './plugins/t10nProgress';
 
@@ -28,6 +29,7 @@ export default buildConfig({
     Pages,
     Users,
     Media,
+    Tests,
   ],
   globals: [
     MainMenu,
@@ -63,7 +65,7 @@ export default buildConfig({
     }),
     t10nProgress({
       collections: [
-        'posts', 'pages',
+        'tests',
       ],
     }),
   ]
