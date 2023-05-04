@@ -141,20 +141,26 @@ const i18nSerializeData = (data: any, config: Field | Field[], namespace?: strin
 
                     // Make sure the block namespace exists in the data
                     if (!data[blockField.name]) return result;
-
+                    
                     // Loop through each data item
                     for (const item of data[blockField.name]) {
                         
                         // Get the right fields config for the block
-                        const blockFields = blockField.blocks.find((block) => {
+                        const blockConfig = blockField.blocks.find((block) => {
                             return block.slug === item.blockType
                         });
+
+                        // Blocks also allow you to define `localize: true` on them
+                        // If that's the case, we need to cascade that property down to the children
+                        const blockFields = blockField?.localized ? blockConfig.fields.map((field) => {
+                            return { ...field, localized: true }
+                        }) : blockConfig.fields;
 
                         // Update the namespace for the children
                         const childrenNamespace = (namespace ? `${namespace}${serializerDelimiter}` : '') + blockField.name + serializerDelimiter + item.id;
 
                         // Go deeper into the block's fields
-                        result = { ...result, ...i18nSerializeData(item, blockFields.fields, childrenNamespace) };
+                        result = { ...result, ...i18nSerializeData(item, blockFields, childrenNamespace) };
 
                     }
                     break;
