@@ -2,6 +2,7 @@
 import { ArrayField, BlockField, Field, FieldAffectingData, FieldWithSubFields, GroupField, TabsField, fieldIsLocalized, tabHasName } from 'payload/dist/fields/config/types';
 import { slateToHtml, payloadSlateToDomConfig } from 'slate-serializers'
 import { serializerDelimiter, translatableFieldTypes, traversableFieldTypes } from "./types";
+import { Payload } from 'payload';
 
 /**
  * Turn a given doc's data (partial or complete) to a flat object of localized strings.

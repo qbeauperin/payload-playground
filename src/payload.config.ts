@@ -63,10 +63,6 @@ export default buildConfig({
         },
       },
     }),
-    t10nProgress({
-      collections: [
-        'tests',
-      ],
-    }),
+    t10nProgress(),
   ]
 });

@@ -1,109 +1,114 @@
-import payload from "payload";
-import { Config, Plugin } from 'payload/config';
-import { translationProgress } from './fields/translationProgress';
-import t10nProgressUI from './fields/t10nProgressUI';
+import { Config } from 'payload/config';
 import { PluginOptions } from './types';
-import serializeDocument from "./utilities/i18nSerialize";
 import { LocalizationConfig } from 'payload/dist/config/types';
-import { Field } from 'payload/dist/fields/config/types';
-import buildStateFromSchema from 'payload/dist/admin/components/forms/Form/buildStateFromSchema';
-import { CollectionBeforeChangeHook } from 'payload/types';
+import { CollectionBeforeChangeHook, CollectionBeforeReadHook } from 'payload/types';
+import t10nProgressField from './fields/t10nProgress';
 import i18nSerializeData from "./utilities/i18nSerialize";
 
-export const t10nProgress = (pluginOptions: PluginOptions) => (incomingConfig: Config): Config => {
+export const t10nProgress = (pluginOptions?: PluginOptions) => (incomingConfig: Config): Config => {
 
-    // If no config is passed, return the config untouched
-    if (!pluginOptions?.collections || pluginOptions?.collections.length <= 0) return incomingConfig;
-    
+    // Extract localization config
+    const { localization } = incomingConfig;
+    const { locales, defaultLocale } = localization as LocalizationConfig;
+
     const config: Config = {
         ...incomingConfig,
         collections: incomingConfig.collections.map((collectionConfig) => {
-            const collectionSlug = collectionConfig.slug;
-            // If collection is not part of the ones passed in the options, ignore it
-            if(!pluginOptions?.collections.includes(collectionSlug)) return collectionConfig;
+
+            // If collections were passed in the options and this one isn't one of them, skip it 
+            if (pluginOptions?.collections && !pluginOptions.collections.includes(collectionConfig.slug)){
+                return collectionConfig;
+            }
+
+            // Check if the collection has any localized fields
+            const stringifiedConfig = JSON.stringify(collectionConfig);
+            const hasLocalizedFields = stringifiedConfig?.indexOf('"localized":true') >= 0;
+
+            // If no collection was passed in the options and the collection has no localized field, skip it
+            if (!pluginOptions?.collections && !hasLocalizedFields) return collectionConfig;
 
             // Define hooks
-            const updateTranslationProgress: CollectionBeforeChangeHook = async ({ data, req: { user, payload, params: { id }, locale, t }, operation }) => {
-            // const updateTranslationProgress: CollectionBeforeChangeHook = async ({ data, req }) => {
-                // const { localization, collections } = incomingConfig;
-                // const { locales, defaultLocale } = localization as LocalizationConfig;
-
-                console.log('  ');
-                console.log('  ');
-                // console.log('  ');
-                // console.log('// collectionConfig.fields:');
-                // console.log(collectionConfig.fields);
-                
-                console.log('  ');
-                console.log('// data:');
-                console.log(data);
-                
+            const updateT10nProgress: CollectionBeforeChangeHook = async ({ data, req: { locale }, originalDoc }) => {
+                // Serialize the data to get only localized fields
                 const i18nSerializedData = i18nSerializeData(data, collectionConfig.fields);
                 
-                console.log('  ');
-                console.log('// i18nSerializedData:');
-                console.log(i18nSerializedData);
+                // Initialize the progress json if it's a create event
+                let t10nProgress = originalDoc?.t10nProgress ? originalDoc.t10nProgress : locales.reduce((acc, locale) => {
+                    return { ...acc, [locale]: 0 }
+                }, {});
                 
+                // Add progress to the data to be saved
+                return {
+                    ...data,
+                    t10nProgress: {
+                        ...t10nProgress,
+                        [locale]: Object.keys(i18nSerializedData).length
+                    }
+                };
+            }
 
-                // const fullDoc = await payload.findByID({
-                //     collection: collectionConfig.slug,
-                //     id: id,
-                //     locale: "de",
-                //     draft: true,
-                // });
+            const initT10nProgress: CollectionBeforeReadHook = async ({ doc, req }) => {
+                // If t10nProgress field exists, skip
+                if (doc?.t10nProgress) return doc;
+                
+                // Prevent runs from manual payload requests
+                if(req?.params === undefined) return doc;
 
-                // const serializedDoc = serializeDocument(
-                //     payload,
-                //     id,
-                //     collectionConfig, 
-                // );
+                console.log('t10nProgress init!');
                 
-                // console.log('// fullDoc: ', fullDoc);
-                
+                // Loop through each locale
+                let progress = {};
+                for (const locale of locales) {
+                    const localeDoc = await req.payload.findByID({
+                        collection: collectionConfig.slug,
+                        id: doc.id,
+                        locale: locale,
+                        draft: true,
+                        fallbackLocale: false,
+                    });
+                    const localeDocI18nSerialized = localeDoc ? i18nSerializeData(localeDoc, collectionConfig.fields) : {};
+                    
+                    progress = { 
+                        ...progress, 
+                        [locale]: Object.keys(localeDocI18nSerialized).length,
+                    }
+                }
 
-                // console.log('// fieldsConfig: ', fieldsConfig);
-                
-                // const getLocalizedFieldsFromConfig = (config: Field[]): { [key: string]: boolean } => {
-                //     const localizedFields = config.map((field:Field) => {
-                //         if (field.type === 'tabs'){
-                //             field.tabs.forEach((tab) => {
-                //                 tab.fields.forEach((tabField) => {
-                //                     console.log('// field: ', tabField);
-                //                 });
-                //             });
-                            
-                //             // const tabsFields = field.tabs.map((tab) => {
-                                
-                //                 // }) 
-                //             }else{
-                //             console.log('// field: ', field);
-                //         }
-                //     });
+                // Update the doc with that fresh t10nProgress data
+                const updateDoc = await req.payload.update({
+                    collection: collectionConfig.slug,
+                    id: doc.id,
+                    draft: true,
+                    locale: defaultLocale,
+                    data: {
+                        t10nProgress: progress
+                    }
+                })
 
-                //     return {title: true};
-                // }
-                // getLocalizedFieldsFromConfig(fieldsConfig);
-                
-                return data;
+                return updateDoc;
             }
 
             // Make sure to spread already defined hooks
             const beforeChange = collectionConfig.hooks?.beforeChange ? [
                 ...collectionConfig.hooks.beforeChange,
-                updateTranslationProgress
-            ] : [ updateTranslationProgress ];
+                updateT10nProgress
+            ] : [ updateT10nProgress ];
+            const beforeRead = collectionConfig.hooks?.beforeRead ? [
+                ...collectionConfig.hooks.beforeRead,
+                initT10nProgress
+            ] : [ initT10nProgress ];
             
             // Add our translator fields to all collections passed in the plugin options
             return {
                 ...collectionConfig,
                 fields: [
                     ...collectionConfig.fields,
-                    translationProgress,
-                    t10nProgressUI,
+                    t10nProgressField,
                 ],
                 hooks: {
                     ...collectionConfig.hooks,
                     beforeChange: beforeChange,
+                    beforeRead: beforeRead,
                 }
             };
         }),

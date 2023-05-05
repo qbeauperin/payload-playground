@@ -1,4 +1,4 @@
-.translator {
+.t10Progress {
     margin-top: 4rem;
 
     .btn {
@@ -37,24 +37,9 @@
             margin-right: 1.9230769231rem;
         }
     }
-
-    .progress-bar {
-        flex: 1;
-        position: relative;
-        height: 2px;
-        background-color: var(--theme-elevation-100);
-
-        &__progress {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 0;
-            height: 100%;
-        }
-    }
 }
 
-.translator, .translator__modal {
+.t10Progress, .t10Progress__modal {
     ul {
         list-style: none;
         padding: 0;

@@ -1,21 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Chevron } from 'payload/components/icons';
 import { usePreferences } from 'payload/components/preferences';
-
-const ProgressBar: React.FC = ({progress}) => {
-    const colors = [
-        {max: 50, color: 'red'},
-        {max: 75, color: 'orangered'},
-        {max: 99, color: 'orange'},
-        {max: 100, color: 'green'}
-    ];
-    
-    return (
-        <div className='progress-bar'>
-            <div className='progress-bar__progress' style={{ width: `${progress}%`, backgroundColor: colors.find(color => progress <= color.max)?.color } as React.CSSProperties}></div>
-        </div>
-    )
-}
+import ProgressBar from '../ProgressBar';
+import './styles.scss';
 
 const LocaleProgress: React.FC = ({locale, localeCount, defaultLocaleCount}) => {
     const progress = Math.round(localeCount / defaultLocaleCount * 100);

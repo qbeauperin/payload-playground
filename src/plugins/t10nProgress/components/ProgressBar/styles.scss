@@ -1,0 +1,14 @@
+.progress-bar {
+    flex: 1;
+    position: relative;
+    height: 2px;
+    background-color: var(--theme-elevation-100);
+
+    &__progress {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 100%;
+    }
+}
