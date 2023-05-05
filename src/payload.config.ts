@@ -9,12 +9,18 @@ import Users from './collections/Users';
 import Media from './collections/Media';
 import MainMenu from './globals/MainMenu';
 
-const adapter = gcsAdapter({
-  options: {
-    keyFilename: './gcs-credentials.json',
-  },
-  bucket: process.env.GCS_BUCKET,
-})
+const credentials = process.env.GCS_CREDENTIALS
+  ? JSON.parse(Buffer.from(process.env.GCS_CREDENTIALS, 'base64').toString('ascii'))
+  : null
+
+const adapter = process.env.GCS_BUCKET
+  ? gcsAdapter({
+    options: {
+      credentials: credentials,
+    },
+    bucket: process.env.GCS_BUCKET,
+  })
+  : null
 
 export default buildConfig({
   serverURL: process.env.SERVER_URL,
