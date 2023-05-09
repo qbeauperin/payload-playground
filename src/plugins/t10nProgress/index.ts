@@ -29,6 +29,7 @@ export const t10nProgress = (pluginOptions?: PluginOptions) => (incomingConfig: 
 
             // Define hooks
             const updateT10nProgress: CollectionBeforeChangeHook = async ({ data, req: { locale }, originalDoc }) => {
+
                 // Serialize the data to get only localized fields
                 const i18nSerializedData = i18nSerializeData(data, collectionConfig.fields);
                 
@@ -101,10 +102,20 @@ export const t10nProgress = (pluginOptions?: PluginOptions) => (incomingConfig: 
             // Add our translator fields to all collections passed in the plugin options
             return {
                 ...collectionConfig,
+                // Add field to the admin default columns
+                admin: {
+                    ...(collectionConfig?.admin ? collectionConfig.admin : {}),
+                    defaultColumns: collectionConfig?.admin?.defaultColumns ? [
+                        ...collectionConfig.admin.defaultColumns,
+                        t10nProgressField.name,
+                    ] : []
+                },
+                // Add field
                 fields: [
                     ...collectionConfig.fields,
                     t10nProgressField,
                 ],
+                // Add hooks
                 hooks: {
                     ...collectionConfig.hooks,
                     beforeChange: beforeChange,

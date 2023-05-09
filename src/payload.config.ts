@@ -13,7 +13,7 @@ import { t10nProgress } from './plugins/t10nProgress';
 
 const credentials = process.env.GCS_CREDENTIALS
   ? JSON.parse(Buffer.from(process.env.GCS_CREDENTIALS, 'base64').toString('ascii'))
-  : null
+  : null;
 
 const adapter = process.env.GCS_BUCKET
   ? gcsAdapter({
@@ -22,7 +22,7 @@ const adapter = process.env.GCS_BUCKET
     },
     bucket: process.env.GCS_BUCKET,
   })
-  : null
+  : null;
 
 export default buildConfig({
   serverURL: process.env.SERVER_URL,
